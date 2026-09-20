@@ -1,4 +1,3 @@
-// 取得したLarkのデータを一時保存する変数
 let cachedLarkData = null;
 
 window.onload = async function () {
@@ -73,66 +72,52 @@ function renderAccountInfo(elementId, idKey, pwKey) {
 // === ボタンのクリックイベントを設定する関数 ===
 function setupButtonListeners() {
   document.getElementById("btn-rule").addEventListener("click", () => {
-    showDetails("打刻・シフトルール", "打刻・シフトルール");
+    openLinkDirectly("打刻・シフトルール");
   });
 
   document.getElementById("btn-salary").addEventListener("click", () => {
-    showDetails("給与条件", "給与条件");
+    openLinkDirectly("給与条件");
   });
 }
 
-// === 詳細情報を表示する関数（URLの自動リンク化対応） ===
-function showDetails(title, dataKey) {
-  const container = document.getElementById("details-container");
-  const titleEl = document.getElementById("details-title");
-  const contentEl = document.getElementById("details-content");
-
-  container.style.display = "block";
-  titleEl.textContent = title;
-
+// === 直接リンクを開く（無い場合はポップアップを出す）関数 ===
+function openLinkDirectly(dataKey) {
+  // 1. データがまだロードされていない場合
   if (!cachedLarkData) {
-    contentEl.innerHTML = `<span class="error-text">まだデータを読み込んでいます。数秒後にお試しください。</span>`;
+    alert("データを読み込んでいます。数秒待ってから再度タップしてください。");
     return;
   }
 
-  // ターゲットのデータ（配列）を取得
   const targetData = cachedLarkData?.[dataKey];
   const valueArray = targetData?.value;
 
   if (valueArray && valueArray.length > 0) {
     const firstItem = valueArray[0];
+    const textContent = firstItem.text || firstItem.link || firstItem.url;
 
-    // ① Google Drive等のURLを「テキスト」として登録した場合の処理
-    if (firstItem.text) {
-      let textContent = firstItem.text;
+    if (textContent) {
+      // 取得した文字列の中からURL(http/httpsで始まる部分)を抽出する
+      const urlMatch = textContent.match(/(https?:\/\/[^\s]+)/);
       
-      // テキストの中にURL(http or https)だけがポツンと貼られている場合、ボタン化する
-      const urlRegex = /^(https?:\/\/[^\s]+)$/;
-      if (urlRegex.test(textContent.trim())) {
-        contentEl.innerHTML = `
-          <div style="text-align: center; padding: 10px 0;">
-            <a href="${textContent.trim()}" target="_blank" rel="noopener noreferrer" 
-               style="display: inline-block; width: 100%; box-sizing: border-box; padding: 12px; background: #06c755; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; text-align: center;">
-              🔗 リンクを開く
-            </a>
-          </div>
-        `;
-      } else {
-        // 文章とURLが混ざっている場合や、ただの文章の場合は、
-        // URL部分だけを自動でクリック可能な青いリンクにしつつ、改行を適用する
-        const autoLinkRegex = /(https?:\/\/[^\s]+)/g;
-        let linkedText = textContent
-          .replace(/</g, "&lt;") // セキュリティ対策
-          .replace(/>/g, "&gt;")
-          .replace(autoLinkRegex, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #0066cc; text-decoration: underline;">$1</a>');
+      if (urlMatch && urlMatch[1]) {
+        const targetUrl = urlMatch[1];
         
-        contentEl.innerHTML = linkedText.replace(/\n/g, "<br>");
+        // LIFF環境であれば openWindow を使い、それ以外(PC等)は window.open を使う
+        if (liff.isInClient()) {
+          liff.openWindow({ url: targetUrl, external: false });
+        } else {
+          window.open(targetUrl, "_blank", "noopener,noreferrer");
+        }
+      } else {
+        // 2. テキストは入っているが、URLが見つからなかった場合
+        alert(`${dataKey} に有効なURL（リンク）が登録されていません。\n登録内容：${textContent}`);
       }
-    } 
-    else {
-      contentEl.innerHTML = `<span style="color:#999;">表示できる形式のデータがありません。</span>`;
+    } else {
+      // 3. データの中身が空だった場合
+      alert(`${dataKey} の情報が登録されていません。`);
     }
   } else {
-    contentEl.innerHTML = `<span style="color:#999;">情報が登録されていません。</span>`;
+    // 4. Larkの該当列自体が空欄だった場合
+    alert(`${dataKey} の情報が登録されていません。`);
   }
 }
