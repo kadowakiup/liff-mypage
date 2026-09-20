@@ -48,14 +48,10 @@ async function fetchLarkData(userId, apiUrl) {
 
     // アカウント情報の描画（引数：描画先のID, データ, IDの列名, PWの列名）
     renderAccountInfo("nqc-data-content", "Neo Quick Call", "Neo Quick Call PW");
-    
-    // ※Lark上のSCCの列名に合わせて "SCC", "SCC PW" の部分を変更してください
-    renderAccountInfo("scc-data-content", "SCC", "SCC PW");
 
   } catch (error) {
     console.error("Fetch Data Error:", error);
     document.getElementById("nqc-data-content").innerHTML = `<span class="error-text">データの取得に失敗しました。</span>`;
-    document.getElementById("scc-data-content").innerHTML = `<span class="error-text">データの取得に失敗しました。</span>`;
   }
 }
 
