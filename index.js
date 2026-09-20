@@ -80,9 +80,8 @@ function setupButtonListeners() {
   });
 }
 
-// === 直接リンクを開く（無い場合はポップアップを出す）関数 ===
+// === 直接リンクを開く（無い・開けない場合はポップアップを出す）関数 ===
 function openLinkDirectly(dataKey) {
-  // 1. データがまだロードされていない場合
   if (!cachedLarkData) {
     alert("データを読み込んでいます。数秒待ってから再度タップしてください。");
     return;
@@ -93,7 +92,9 @@ function openLinkDirectly(dataKey) {
 
   if (valueArray && valueArray.length > 0) {
     const firstItem = valueArray[0];
-    const textContent = firstItem.text || firstItem.link || firstItem.url;
+    
+    // Larkのテキスト列やリンク列に入っている情報を取得
+    const textContent = firstItem.text || firstItem.link || firstItem.url || "";
 
     if (textContent) {
       // 取得した文字列の中からURL(http/httpsで始まる部分)を抽出する
@@ -102,22 +103,26 @@ function openLinkDirectly(dataKey) {
       if (urlMatch && urlMatch[1]) {
         const targetUrl = urlMatch[1];
         
-        // LIFF環境であれば openWindow を使い、それ以外(PC等)は window.open を使う
+        // ★ 安全装置：LarkのAPI用URL（PDFの残骸など）の場合は画面遷移させず、ポップアップを出す
+        if (targetUrl.includes("open.larksuite.com/open-apis/")) {
+          alert(`【エラー】\n${dataKey} に直接開けないファイル形式（PDF等）が設定されているか、過去のデータが残っています。\nLark側で「Googleドライブ等の共有リンク」に書き直してください。`);
+          return;
+        }
+
+        // 正常なGoogle Drive等のURLであれば開く
         if (liff.isInClient()) {
           liff.openWindow({ url: targetUrl, external: false });
         } else {
           window.open(targetUrl, "_blank", "noopener,noreferrer");
         }
       } else {
-        // 2. テキストは入っているが、URLが見つからなかった場合
+        // テキストは入っているが、URLが見つからなかった場合
         alert(`${dataKey} に有効なURL（リンク）が登録されていません。\n登録内容：${textContent}`);
       }
     } else {
-      // 3. データの中身が空だった場合
       alert(`${dataKey} の情報が登録されていません。`);
     }
   } else {
-    // 4. Larkの該当列自体が空欄だった場合
     alert(`${dataKey} の情報が登録されていません。`);
   }
 }
