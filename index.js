@@ -4,7 +4,7 @@ window.onload = async function () {
 
   try {
     // 1. LIFFの初期化 (※別のページとして独立させる場合、新しいLIFF IDに書き換えてください)
-    await liff.init({ liffId: "2009827198-1tNPTxFt" });
+    await liff.init({ liffId: "2009827198-CXcOChHP" });
 
     // 2. ログインチェック
     if (!liff.isLoggedIn()) {
