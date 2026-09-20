@@ -35,10 +35,6 @@ async function fetchLarkData(userId, apiUrl) {
       throw new Error(`HTTP Error: ${response.status}`);
     }
 
-    // ★ もしCloudflareからそのままJSONが返ってきているなら、
-    // const json = await response.json(); 
-    // cachedLarkData = json.body; とする必要があるかもしれません。
-    // 現状は元のコードに合わせて直接格納しています。
     cachedLarkData = await response.json();
 
     renderAccountInfo("nqc-data-content", "Neo Quick Call", "Neo Quick Call PW");
@@ -85,7 +81,7 @@ function setupButtonListeners() {
   });
 }
 
-// === 詳細情報を表示する関数（PDF・テキスト両対応） ===
+// === 詳細情報を表示する関数（URLの自動リンク化対応） ===
 function showDetails(title, dataKey) {
   const container = document.getElementById("details-container");
   const titleEl = document.getElementById("details-title");
@@ -106,26 +102,32 @@ function showDetails(title, dataKey) {
   if (valueArray && valueArray.length > 0) {
     const firstItem = valueArray[0];
 
-    // ① PDFファイル（添付ファイル）の場合の処理
-    // 生データの "type" が "application/pdf" または URLが含まれているかで判定
-    if (firstItem.url || firstItem.type === "application/pdf") {
-      const fileName = firstItem.name || "ファイル";
-      // tmp_url の方が直接ブラウザで開きやすいため優先、無ければ url を使用
-      const fileUrl = firstItem.tmp_url || firstItem.url;
-
-      contentEl.innerHTML = `
-        <div style="text-align: center; padding: 10px 0;">
-          <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" 
-             style="display: inline-block; width: 100%; box-sizing: border-box; padding: 12px; background: #06c755; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; text-align: center;">
-            📄 ${fileName} を開く
-          </a>
-          <p style="font-size: 11px; color: #888; margin-top: 8px;">タップするとブラウザでファイルが開きます</p>
-        </div>
-      `;
-    } 
-    // ② テキストデータの場合の処理（元々の動き）
-    else if (firstItem.text) {
-      contentEl.innerHTML = firstItem.text.replace(/\n/g, "<br>");
+    // ① Google Drive等のURLを「テキスト」として登録した場合の処理
+    if (firstItem.text) {
+      let textContent = firstItem.text;
+      
+      // テキストの中にURL(http or https)だけがポツンと貼られている場合、ボタン化する
+      const urlRegex = /^(https?:\/\/[^\s]+)$/;
+      if (urlRegex.test(textContent.trim())) {
+        contentEl.innerHTML = `
+          <div style="text-align: center; padding: 10px 0;">
+            <a href="${textContent.trim()}" target="_blank" rel="noopener noreferrer" 
+               style="display: inline-block; width: 100%; box-sizing: border-box; padding: 12px; background: #06c755; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; text-align: center;">
+              🔗 リンクを開く
+            </a>
+          </div>
+        `;
+      } else {
+        // 文章とURLが混ざっている場合や、ただの文章の場合は、
+        // URL部分だけを自動でクリック可能な青いリンクにしつつ、改行を適用する
+        const autoLinkRegex = /(https?:\/\/[^\s]+)/g;
+        let linkedText = textContent
+          .replace(/</g, "&lt;") // セキュリティ対策
+          .replace(/>/g, "&gt;")
+          .replace(autoLinkRegex, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #0066cc; text-decoration: underline;">$1</a>');
+        
+        contentEl.innerHTML = linkedText.replace(/\n/g, "<br>");
+      }
     } 
     else {
       contentEl.innerHTML = `<span style="color:#999;">表示できる形式のデータがありません。</span>`;
