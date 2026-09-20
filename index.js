@@ -1,9 +1,15 @@
+// 取得したLarkのデータを一時保存する変数
+let cachedLarkData = null;
+
 window.onload = async function () {
-  // ★CloudflareのAPIエンドポイント（WorkerのURL等）を指定してください
+  // Cloudflare（Worker等）のAPIエンドポイント
   const CLOUDFLARE_API_URL = "https://mypage.kadowaki-universal-prime.workers.dev/";
 
+  // ボタンのクリックイベントを先に設定
+  setupButtonListeners();
+
   try {
-    // 1. LIFFの初期化 (※別のページとして独立させる場合、新しいLIFF IDに書き換えてください)
+    // 1. LIFFの初期化
     await liff.init({ liffId: "2009827198-CXcOChHP" });
 
     // 2. ログインチェック
@@ -12,12 +18,12 @@ window.onload = async function () {
       return;
     }
 
-    // 3. ユーザー情報の取得 (Lark側の検索キーとしてLINE UserIDを使う場合)
+    // 3. ユーザー情報の取得 (Lark側の検索キーとしてLINE UserIDを使用)
     const profile = await liff.getProfile();
     const userId = profile.userId;
 
-    // 4. Cloudflare(Anycross経由)からLarkのデータを取得して表示
-    fetchLarkData(userId, CLOUDFLARE_API_URL);
+    // 4. Cloudflare経由でAnycross(Lark)からデータを取得
+    await fetchLarkData(userId, CLOUDFLARE_API_URL);
 
   } catch (err) {
     console.error("LIFF Init Error:", err);
@@ -27,54 +33,98 @@ window.onload = async function () {
 
 // === Larkのデータを取得する関数 ===
 async function fetchLarkData(userId, apiUrl) {
-  const contentElement = document.getElementById("lark-data-content");
-
   try {
     const response = await fetch(`${apiUrl}?userId=${userId}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
+      headers: { "Content-Type": "application/json" }
     });
 
     if (!response.ok) {
       throw new Error(`HTTP Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    // 取得したデータをグローバル変数に保存（ボタンクリック時に使い回すため）
+    cachedLarkData = await response.json();
 
-    // データの取得
-    const nqcId = data?.["Neo Quick Call"]?.value?.[0]?.text;
-    const nqcPw = data?.["Neo Quick Call PW"]?.value?.[0]?.text;
-
-    if (nqcId || nqcPw) {
-      // 読み込み中のセンタリングを解除
-      contentElement.style.textAlign = "left"; 
-      
-      // シンプルな横並びのリスト風デザイン
-      contentElement.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0;">
-          <span style="font-size: 12px; color: #888; letter-spacing: 0.5px;">ID</span>
-          <strong style="font-size: 16px; color: #111; user-select: all; letter-spacing: 0.5px;">${nqcId || "未登録"}</strong>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px;">
-          <span style="font-size: 12px; color: #888; letter-spacing: 0.5px;">Password</span>
-          <strong style="font-size: 16px; color: #111; user-select: all; letter-spacing: 0.5px;">${nqcPw || "未登録"}</strong>
-        </div>
-      `;
-    } else {
-      contentElement.innerHTML = `
-        <p style="color: #d9534f; font-size: 13px; font-weight: bold; margin-bottom: 4px;">データ構造が一致しませんでした</p>
-        <p style="font-size: 11px; margin-bottom: 8px;">以下の生データを確認してください：</p>
-        <div style="background:#eee; padding:8px; font-size:11px; word-break:break-all; max-height:200px; overflow-y:auto; border-radius:4px;">
-          ${JSON.stringify(data)}
-        </div>
-      `;
-    }
+    // アカウント情報の描画（引数：描画先のID, データ, IDの列名, PWの列名）
+    renderAccountInfo("nqc-data-content", "Neo Quick Call", "Neo Quick Call PW");
+    
+    // ※Lark上のSCCの列名に合わせて "SCC", "SCC PW" の部分を変更してください
+    renderAccountInfo("scc-data-content", "SCC", "SCC PW");
 
   } catch (error) {
     console.error("Fetch Data Error:", error);
-    contentElement.style.color = "red";
-    contentElement.innerHTML = `<p>データの取得に失敗しました。</p>`;
+    document.getElementById("nqc-data-content").innerHTML = `<span class="error-text">データの取得に失敗しました。</span>`;
+    document.getElementById("scc-data-content").innerHTML = `<span class="error-text">データの取得に失敗しました。</span>`;
+  }
+}
+
+// === アカウント情報をHTMLに描画する共通関数 ===
+function renderAccountInfo(elementId, idKey, pwKey) {
+  const contentElement = document.getElementById(elementId);
+  const data = cachedLarkData;
+
+  // Anycross経由で返ってくるデータ構造から値を取得
+  const accountId = data?.[idKey]?.value?.[0]?.text;
+  const accountPw = data?.[pwKey]?.value?.[0]?.text;
+
+  if (accountId || accountPw) {
+    // 取得成功時、中央揃えを解除するためのクラスを追加
+    contentElement.classList.add("loaded");
+    
+    // CSSクラスを使ったHTML構造を挿入
+    contentElement.innerHTML = `
+      <div class="account-row account-row-first">
+        <span class="account-label">ID</span>
+        <strong class="account-value">${accountId || "未登録"}</strong>
+      </div>
+      <div class="account-row account-row-second">
+        <span class="account-label">Password</span>
+        <strong class="account-value">${accountPw || "未登録"}</strong>
+      </div>
+    `;
+  } else {
+    // データがない場合の表示
+    contentElement.innerHTML = `情報が登録されていません`;
+  }
+}
+
+// === ボタンのクリックイベントを設定する関数 ===
+function setupButtonListeners() {
+  document.getElementById("btn-rule").addEventListener("click", () => {
+    // ※Lark上の列名に合わせて "打刻・シフトルール" を変更してください
+    showDetails("打刻・シフトルール", "打刻・シフトルール");
+  });
+
+  document.getElementById("btn-salary").addEventListener("click", () => {
+    // ※Lark上の列名に合わせて "給与条件" を変更してください
+    showDetails("給与条件", "給与条件");
+  });
+}
+
+// === 詳細情報を表示する関数 ===
+function showDetails(title, dataKey) {
+  const container = document.getElementById("details-container");
+  const titleEl = document.getElementById("details-title");
+  const contentEl = document.getElementById("details-content");
+
+  // エリアを表示状態にする
+  container.style.display = "block";
+  titleEl.textContent = title;
+
+  // データがまだ取得できていない場合のフェイルセーフ
+  if (!cachedLarkData) {
+    contentEl.innerHTML = `<span class="error-text">まだデータを読み込んでいます。数秒後にお試しください。</span>`;
+    return;
+  }
+
+  // Larkのデータを取得
+  const textValue = cachedLarkData?.[dataKey]?.value?.[0]?.text;
+
+  if (textValue) {
+    // 改行コード(\n)をHTMLの改行(<br>)に変換して表示
+    contentEl.innerHTML = textValue.replace(/\n/g, "<br>");
+  } else {
+    contentEl.innerHTML = `<span style="color:#999;">情報が登録されていません。</span>`;
   }
 }

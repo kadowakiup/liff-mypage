@@ -15,14 +15,34 @@
   </head>
   <body>
     <div class="menu-container">
-      <h2>アカウント情報</h2>
+      <h2>アカウント・条件情報</h2>
 
-      <!-- Lark情報表示エリア -->
-      <div id="lark-data-container" style="margin: 20px 0; padding: 20px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <h3 style="margin: 0 0 16px 0; font-size: 15px; color: #333; text-align: center; font-weight: 600;">Neo Quick Call</h3>
-        <div id="lark-data-content" style="font-size: 13px; color: #999; text-align: center;">読み込み中...</div>
+      <!-- ▼ アカウント情報：Neo Quick Call -->
+      <div class="card">
+        <h3 class="card-title">Neo Quick Call</h3>
+        <div id="nqc-data-content" class="data-content">読み込み中...</div>
+      </div>
+
+      <!-- ▼ アカウント情報：SCC -->
+      <div class="card">
+        <h3 class="card-title">SCC</h3>
+        <div id="scc-data-content" class="data-content">読み込み中...</div>
       </div>
       
+      <!-- ▼ 情報確認ボタン -->
+      <div class="button-group">
+        <button id="btn-rule" class="menu-btn">📖 打刻・シフトルール</button>
+        <button id="btn-salary" class="menu-btn">💰 給与条件</button>
+      </div>
+
+      <!-- ▼ ボタンを押した時の詳細表示エリア -->
+      <div id="details-container" class="details-container">
+        <h3 id="details-title" class="details-title">タイトル</h3>
+        <div id="details-content" class="details-content">
+          内容がここに表示されます。
+        </div>
+      </div>
+
     </div>
   </body>
 </html>
