@@ -25,19 +25,25 @@
       
       <!-- ▼ 情報確認ボタン -->
       <div class="button-group">
-        <!-- 例: index.html のボタン部分 -->
+       <!-- 打刻・シフトルール（上段：横長のまま） -->
 <button id="btn-rule" class="menu-btn notion-btn">
   📖 打刻・シフトルール
 </button>
 
-<button id="btn-salary-current" class="menu-btn notion-btn">
-  💰 今月給与条件
-</button>
+<!-- 給与条件（下段：横並び） -->
+<div class="salary-buttons-wrapper">
+  <!-- 今月分（目立つ色） -->
+  <button id="btn-salary-current" class="btn-square btn-current">
+    <span class="btn-icon">💰</span>
+    <span class="btn-text">今月<br>給与条件</span>
+  </button>
 
-<button id="btn-salary-prev" class="menu-btn notion-btn">
-  💰 先月給与条件
-</button>
-      </div>
+  <!-- 先月分（控えめな色） -->
+  <button id="btn-salary-prev" class="btn-square btn-prev">
+    <span class="btn-icon">🕒</span>
+    <span class="btn-text">先月<br>給与条件</span>
+  </button>
+</div>
 
     </div>
   </body>
