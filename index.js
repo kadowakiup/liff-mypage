@@ -39,7 +39,7 @@ async function fetchLarkData(userId, apiUrl) {
 
     cachedLarkData = await response.json();
 
-    // ID/PWの描画関数を呼び出し（HTMLに <div id="nqc-data-content"> が残っている場合用）
+    // ID/PWの描画関数を呼び出し
     renderAccountInfo("nqc-data-content", "Neo Quick Call", "Neo Quick Call PW");
 
   } catch (error) {
@@ -57,6 +57,7 @@ function renderAccountInfo(elementId, idKey, pwKey) {
   if (!contentElement) return; // HTMLに要素がない場合はスキップ
 
   const data = cachedLarkData;
+  // .body の指定を外しました
   const idPwData = data?.["ID/PW"];
   const accountId = idPwData?.[idKey]?.value?.[0]?.text;
   const accountPw = idPwData?.[pwKey]?.value?.[0]?.text;
@@ -80,7 +81,6 @@ function renderAccountInfo(elementId, idKey, pwKey) {
 
 // === ボタンのクリックイベントを設定する関数 ===
 function setupButtonListeners() {
-  // 1. 打刻・シフトルール -> "今月分ルール"
   const btnRule = document.getElementById("btn-rule");
   if (btnRule) {
     btnRule.addEventListener("click", () => {
@@ -88,7 +88,6 @@ function setupButtonListeners() {
     });
   }
 
-  // 2. 今月給与条件 -> "今月分給与条件"
   const btnSalaryCurrent = document.getElementById("btn-salary-current");
   if (btnSalaryCurrent) {
     btnSalaryCurrent.addEventListener("click", () => {
@@ -96,7 +95,6 @@ function setupButtonListeners() {
     });
   }
 
-  // 3. 先月給与条件 -> "先月分給与条件"
   const btnSalaryPrev = document.getElementById("btn-salary-prev");
   if (btnSalaryPrev) {
     btnSalaryPrev.addEventListener("click", () => {
@@ -107,16 +105,17 @@ function setupButtonListeners() {
 
 // === 直接リンクを開く（無い・開けない場合はポップアップを出す）関数 ===
 function openLinkDirectly(dataKey) {
-  if (!cachedLarkData || !cachedLarkData.body) {
+  // .body のチェックを外しました
+  if (!cachedLarkData) {
     alert("データを読み込んでいます。数秒待ってから再度タップしてください。");
     return;
   }
 
-  // Anycrossから受け取ったJSONのbody内にあるURLを取得
-  const targetUrl = cachedLarkData.body[dataKey];
+  // .body を外して直接キー名でURLを取得
+  const targetUrl = cachedLarkData[dataKey];
 
   if (targetUrl && typeof targetUrl === "string" && targetUrl.match(/^https?:\/\//)) {
-    // ★ 安全装置：LarkのAPI用URL（PDFの残骸など）の場合は画面遷移させず、ポップアップを出す
+    // ★ 安全装置：LarkのAPI用URLの場合は画面遷移させず、ポップアップを出す
     if (targetUrl.includes("open.larksuite.com/open-apis/")) {
       alert(`【エラー】\n${dataKey} に直接開けないファイル形式が設定されているか、過去のデータが残っています。\nLark側で「Googleドライブ等の共有リンク」に書き直してください。`);
       return;
