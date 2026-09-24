@@ -2,6 +2,8 @@ let cachedLarkData = null;
 
 window.onload = async function () {
   const CLOUDFLARE_API_URL = "https://mypage.kadowaki-universal-prime.workers.dev/";
+  
+  // イベントリスナーをセット
   setupButtonListeners();
 
   try {
@@ -14,6 +16,7 @@ window.onload = async function () {
     const profile = await liff.getProfile();
     const userId = profile.userId;
 
+    // データ取得
     await fetchLarkData(userId, CLOUDFLARE_API_URL);
 
   } catch (err) {
@@ -36,22 +39,25 @@ async function fetchLarkData(userId, apiUrl) {
 
     cachedLarkData = await response.json();
 
-    // ID/PWの描画関数を呼び出し
+    // ID/PWの描画関数を呼び出し（HTMLに <div id="nqc-data-content"> が残っている場合用）
     renderAccountInfo("nqc-data-content", "Neo Quick Call", "Neo Quick Call PW");
 
   } catch (error) {
     console.error("Fetch Data Error:", error);
-    document.getElementById("nqc-data-content").innerHTML = `<span class="error-text">データの取得に失敗しました。</span>`;
+    const nqcContent = document.getElementById("nqc-data-content");
+    if (nqcContent) {
+      nqcContent.innerHTML = `<span class="error-text">データの取得に失敗しました。</span>`;
+    }
   }
 }
 
 // === アカウント情報をHTMLに描画する共通関数 ===
 function renderAccountInfo(elementId, idKey, pwKey) {
   const contentElement = document.getElementById(elementId);
-  const data = cachedLarkData;
+  if (!contentElement) return; // HTMLに要素がない場合はスキップ
 
-  // 新しいJSON構造に合わせてアクセスパスを変更 (data.body["ID/PW"] の下)
-  const idPwData = data?.["ID/PW"];
+  const data = cachedLarkData;
+  const idPwData = data?.body?.["ID/PW"];
   const accountId = idPwData?.[idKey]?.value?.[0]?.text;
   const accountPw = idPwData?.[pwKey]?.value?.[0]?.text;
 
@@ -68,23 +74,35 @@ function renderAccountInfo(elementId, idKey, pwKey) {
       </div>
     `;
   } else {
-    // 該当HTML要素が存在する場合は表示
-    if (contentElement) {
-      contentElement.innerHTML = `情報が登録されていません`;
-    }
+    contentElement.innerHTML = `情報が登録されていません`;
   }
 }
 
 // === ボタンのクリックイベントを設定する関数 ===
 function setupButtonListeners() {
-  // Anycrossの新しいキー名に合わせて引数を変更
-  document.getElementById("btn-rule").addEventListener("click", () => {
-    openLinkDirectly("今月分ルール");
-  });
+  // 1. 打刻・シフトルール -> "今月分ルール"
+  const btnRule = document.getElementById("btn-rule");
+  if (btnRule) {
+    btnRule.addEventListener("click", () => {
+      openLinkDirectly("今月分ルール");
+    });
+  }
 
-  document.getElementById("btn-salary").addEventListener("click", () => {
-    openLinkDirectly("今月分給与条件");
-  });
+  // 2. 今月給与条件 -> "今月分給与条件"
+  const btnSalaryCurrent = document.getElementById("btn-salary-current");
+  if (btnSalaryCurrent) {
+    btnSalaryCurrent.addEventListener("click", () => {
+      openLinkDirectly("今月分給与条件");
+    });
+  }
+
+  // 3. 先月給与条件 -> "先月分給与条件"
+  const btnSalaryPrev = document.getElementById("btn-salary-prev");
+  if (btnSalaryPrev) {
+    btnSalaryPrev.addEventListener("click", () => {
+      openLinkDirectly("先月分給与条件");
+    });
+  }
 }
 
 // === 直接リンクを開く（無い・開けない場合はポップアップを出す）関数 ===
@@ -94,13 +112,13 @@ function openLinkDirectly(dataKey) {
     return;
   }
 
-  // 新しいJSON構造に合わせて、URLが直接文字列で入っているものを取得
+  // Anycrossから受け取ったJSONのbody内にあるURLを取得
   const targetUrl = cachedLarkData.body[dataKey];
 
   if (targetUrl && typeof targetUrl === "string" && targetUrl.match(/^https?:\/\//)) {
     // ★ 安全装置：LarkのAPI用URL（PDFの残骸など）の場合は画面遷移させず、ポップアップを出す
     if (targetUrl.includes("open.larksuite.com/open-apis/")) {
-      alert(`【エラー】\n${dataKey} に直接開けないファイル形式（PDF等）が設定されているか、過去のデータが残っています。\nLark側で「Googleドライブ等の共有リンク」に書き直してください。`);
+      alert(`【エラー】\n${dataKey} に直接開けないファイル形式が設定されているか、過去のデータが残っています。\nLark側で「Googleドライブ等の共有リンク」に書き直してください。`);
       return;
     }
 
