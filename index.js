@@ -57,7 +57,7 @@ function renderAccountInfo(elementId, idKey, pwKey) {
   if (!contentElement) return; // HTMLに要素がない場合はスキップ
 
   const data = cachedLarkData;
-  const idPwData = data?.body?.["ID/PW"];
+  const idPwData = data?.["ID/PW"];
   const accountId = idPwData?.[idKey]?.value?.[0]?.text;
   const accountPw = idPwData?.[pwKey]?.value?.[0]?.text;
 
