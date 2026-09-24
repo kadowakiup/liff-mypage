@@ -36,6 +36,7 @@ async function fetchLarkData(userId, apiUrl) {
 
     cachedLarkData = await response.json();
 
+    // ID/PWの描画関数を呼び出し
     renderAccountInfo("nqc-data-content", "Neo Quick Call", "Neo Quick Call PW");
 
   } catch (error) {
@@ -49,8 +50,10 @@ function renderAccountInfo(elementId, idKey, pwKey) {
   const contentElement = document.getElementById(elementId);
   const data = cachedLarkData;
 
-  const accountId = data?.[idKey]?.value?.[0]?.text;
-  const accountPw = data?.[pwKey]?.value?.[0]?.text;
+  // 新しいJSON構造に合わせてアクセスパスを変更 (data.body["ID/PW"] の下)
+  const idPwData = data?.body?.["ID/PW"];
+  const accountId = idPwData?.[idKey]?.value?.[0]?.text;
+  const accountPw = idPwData?.[pwKey]?.value?.[0]?.text;
 
   if (accountId || accountPw) {
     contentElement.classList.add("loaded");
@@ -65,64 +68,49 @@ function renderAccountInfo(elementId, idKey, pwKey) {
       </div>
     `;
   } else {
-    contentElement.innerHTML = `情報が登録されていません`;
+    // 該当HTML要素が存在する場合は表示
+    if (contentElement) {
+      contentElement.innerHTML = `情報が登録されていません`;
+    }
   }
 }
 
 // === ボタンのクリックイベントを設定する関数 ===
 function setupButtonListeners() {
+  // Anycrossの新しいキー名に合わせて引数を変更
   document.getElementById("btn-rule").addEventListener("click", () => {
-    openLinkDirectly("打刻・シフトルール");
+    openLinkDirectly("今月分ルール");
   });
 
   document.getElementById("btn-salary").addEventListener("click", () => {
-    openLinkDirectly("給与条件");
+    openLinkDirectly("今月分給与条件");
   });
 }
 
 // === 直接リンクを開く（無い・開けない場合はポップアップを出す）関数 ===
 function openLinkDirectly(dataKey) {
-  if (!cachedLarkData) {
+  if (!cachedLarkData || !cachedLarkData.body) {
     alert("データを読み込んでいます。数秒待ってから再度タップしてください。");
     return;
   }
 
-  const targetData = cachedLarkData?.[dataKey];
-  const valueArray = targetData?.value;
+  // 新しいJSON構造に合わせて、URLが直接文字列で入っているものを取得
+  const targetUrl = cachedLarkData.body[dataKey];
 
-  if (valueArray && valueArray.length > 0) {
-    const firstItem = valueArray[0];
-    
-    // Larkのテキスト列やリンク列に入っている情報を取得
-    const textContent = firstItem.text || firstItem.link || firstItem.url || "";
+  if (targetUrl && typeof targetUrl === "string" && targetUrl.match(/^https?:\/\//)) {
+    // ★ 安全装置：LarkのAPI用URL（PDFの残骸など）の場合は画面遷移させず、ポップアップを出す
+    if (targetUrl.includes("open.larksuite.com/open-apis/")) {
+      alert(`【エラー】\n${dataKey} に直接開けないファイル形式（PDF等）が設定されているか、過去のデータが残っています。\nLark側で「Googleドライブ等の共有リンク」に書き直してください。`);
+      return;
+    }
 
-    if (textContent) {
-      // 取得した文字列の中からURL(http/httpsで始まる部分)を抽出する
-      const urlMatch = textContent.match(/(https?:\/\/[^\s]+)/);
-      
-      if (urlMatch && urlMatch[1]) {
-        const targetUrl = urlMatch[1];
-        
-        // ★ 安全装置：LarkのAPI用URL（PDFの残骸など）の場合は画面遷移させず、ポップアップを出す
-        if (targetUrl.includes("open.larksuite.com/open-apis/")) {
-          alert(`【エラー】\n${dataKey} に直接開けないファイル形式（PDF等）が設定されているか、過去のデータが残っています。\nLark側で「Googleドライブ等の共有リンク」に書き直してください。`);
-          return;
-        }
-
-        // 正常なGoogle Drive等のURLであれば開く
-        if (liff.isInClient()) {
-          liff.openWindow({ url: targetUrl, external: false });
-        } else {
-          window.open(targetUrl, "_blank", "noopener,noreferrer");
-        }
-      } else {
-        // テキストは入っているが、URLが見つからなかった場合
-        alert(`${dataKey} に有効なURL（リンク）が登録されていません。\n登録内容：${textContent}`);
-      }
+    // 正常なURLであれば開く
+    if (liff.isInClient()) {
+      liff.openWindow({ url: targetUrl, external: false });
     } else {
-      alert(`${dataKey} の情報が登録されていません。`);
+      window.open(targetUrl, "_blank", "noopener,noreferrer");
     }
   } else {
-    alert(`${dataKey} の情報が登録されていません。`);
+    alert(`${dataKey} に有効なURL（リンク）が登録されていません。`);
   }
 }
