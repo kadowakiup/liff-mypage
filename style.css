@@ -1,24 +1,118 @@
-/* 全体のベース設定 */
+@charset "UTF-8";
+
+/* =========================================================
+   1. 全体のベース設定
+========================================================= */
 body {
   font-family: 'Noto Sans', 'Roboto', sans-serif;
-  background-color: #f5f6f8;
+  background-color: #E1F5FE; /* 背景を優しい水色に統一 */
   margin: 0;
   padding: 0;
   color: #333;
 }
 
-/* メニューのコンテナ */
+/* メニュー全体を囲むコンテナ */
 .menu-container {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
+  background-color: transparent; /* 背景の水色を活かすため透明に */
 }
 
+/* タイトル（シフト管理など） */
 .menu-container h2 {
   font-size: 20px;
   text-align: center;
   margin-bottom: 24px;
 }
+
+
+/* =========================================================
+   2. メインボタン（上段：打刻・シフトルール）
+========================================================= */
+.menu-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: background-color 0.2s;
+}
+
+.menu-btn:active {
+  background-color: #f0f0f0;
+}
+
+
+/* =========================================================
+   3. 下段ボタン（今月・先月給与条件の横並び）
+========================================================= */
+.salary-buttons-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px; /* ボタン同士の隙間 */
+  margin-top: 20px; /* 上のボタンからの余白 */
+  width: 100%;
+}
+
+/* 正方形（少し縦長）ボタンの共通スタイル */
+.btn-square {
+  flex: 1; /* 横幅を半分ずつ均等に */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 4 / 5; /* 4:5の縦長（完全な正方形にするなら 1 / 1） */
+  border-radius: 12px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s, opacity 0.2s;
+}
+
+/* タップした時の沈み込みエフェクト */
+.btn-square:active {
+  transform: scale(0.96);
+  opacity: 0.8;
+}
+
+/* アイコンと文字のサイズ調整 */
+.btn-square .btn-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.btn-square .btn-text {
+  font-size: 15px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* --- ボタンの色分け --- */
+/* 今月分：目立つ青色 */
+.btn-current {
+  background-color: #007AFF; 
+  color: #FFFFFF;
+}
+
+/* 先月分：ご要望に合わせて薄めの色（少し青みがかった明るいグレー）に変更 */
+.btn-prev {
+  background-color: #A9B4C2;
+  color: #FFFFFF;
+}
+
+
+/* =========================================================
+   4. 旧マイページ関連（不要であればここから下は削除可能）
+========================================================= */
 
 /* アカウント情報などのカード型デザイン */
 .card {
@@ -79,35 +173,9 @@ body {
   font-weight: bold;
 }
 
-/* メニューボタン */
-.button-group {
-  margin-top: 30px;
-}
-
-.menu-btn {
-  display: block;
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 14px;
-  font-size: 15px;
-  font-weight: bold;
-  color: #333;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  transition: background-color 0.2s;
-}
-
-.menu-btn:active {
-  background-color: #f0f0f0;
-}
-
 /* ルールや条件の詳細表示エリア */
 .details-container {
-  display: none; /* 初期状態は非表示 */
+  display: none;
   margin-top: 20px;
   padding: 20px;
   background-color: #f8f9fa;
@@ -119,7 +187,7 @@ body {
   margin: 0 0 12px 0;
   font-size: 16px;
   color: #111;
-  border-bottom: 2px solid #06c755; /* LINEグリーン風のアクセント */
+  border-bottom: 2px solid #06c755;
   padding-bottom: 8px;
   display: inline-block;
 }
@@ -135,59 +203,4 @@ body {
 .error-text {
   color: #d9534f;
   font-size: 13px;
-}
-
-/* --- 下段ボタンの横並びレイアウト --- */
-.salary-buttons-wrapper {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px; /* ボタン同士の隙間 */
-  margin-top: 20px; /* 上のボタンからの余白 */
-  width: 100%;
-}
-
-/* --- 正方形（少し縦長）ボタンの共通スタイル --- */
-.btn-square {
-  flex: 1; /* 横幅を半分ずつ均等に分ける */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  aspect-ratio: 4 / 5; /* 縦横比（4:5で少し縦長）。正方形に近づけるなら 1 / 1 */
-  border-radius: 12px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.1s, opacity 0.2s;
-}
-
-/* タップした時の沈み込みエフェクト */
-.btn-square:active {
-  transform: scale(0.96);
-  opacity: 0.8;
-}
-
-/* アイコンと文字のサイズ調整 */
-.btn-square .btn-icon {
-  font-size: 32px;
-  margin-bottom: 8px;
-}
-.btn-square .btn-text {
-  font-size: 15px;
-  line-height: 1.4;
-  text-align: center;
-}
-
-/* --- 色分け --- */
-/* 今月分：目立つ青色（LINEの緑がいい場合は #06C755 に変更） */
-.btn-current {
-  background-color: #007AFF; 
-  color: #FFFFFF;
-}
-
-/* 先月分：控えめなグレー */
-.btn-prev {
-  background-color: #6C757D;
-  color: #FFFFFF;
 }
