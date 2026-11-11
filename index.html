@@ -10,9 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <!-- ★ v=5 に変更してキャッシュをクリア -->
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="index.js?v=9"></script>
+    <script src="index.js?v=10"></script>
   </head>
   <body>
     <!-- ローディング画面 -->
@@ -79,7 +79,7 @@
       </main>
     </div>
 
-   <!-- ★ 変更：冬の装飾（雪と雪だるま＆吹き出し） -->
+   <!-- ★ 冬の装飾（雪、ツリー、雪だるま、プレゼント） -->
     <div class="winter-scene">
       <div class="snowflakes">
         <div class="snowflake">❅</div>
@@ -88,11 +88,19 @@
         <div class="snowflake">❆</div>
         <div class="snowflake">❅</div>
       </div>
+      
+      <!-- ▼ 追加：クリスマスツリー -->
+      <div class="christmas-tree">
+        <div class="star">★</div>
+        <div class="tree-layer layer1"></div>
+        <div class="tree-layer layer2"></div>
+        <div class="tree-layer layer3"></div>
+        <div class="trunk"></div>
+      </div>
+
+      <!-- ▼ 雪だるまと吹き出し（既存のまま） -->
       <div class="snowman-container">
-        
-        <!-- ★ 追加：雪だるまの吹き出し -->
-        <div class="snowman-speech" id="snowman-speech">今日も一日<br>頑張りましょう！</div>
-        
+        <div class="snowman-speech" id="snowman-speech">今日も一日<br>頑張ろう！</div>
         <div class="snowman-head">
           <div class="eye left"></div>
           <div class="eye right"></div>
@@ -106,5 +114,11 @@
           <div class="button"></div>
           <div class="button"></div>
         </div>
+      </div>
+
+      <!-- ▼ 追加：プレゼントボックス -->
+      <div class="presents">
+        <div class="present present1"></div>
+        <div class="present present2"></div>
       </div>
     </div>
