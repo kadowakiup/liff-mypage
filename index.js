@@ -48,7 +48,6 @@ async function fetchLarkData(userId, apiUrl) {
   } catch (error) {
     console.error("Fetch Data Error:", error);
     
-    // エラー時は枠ごと非表示
     const apoContent = document.getElementById("apo-data-content");
     if (apoContent) {
       const apoCard = apoContent.closest('.card');
@@ -67,30 +66,41 @@ async function fetchLarkData(userId, apiUrl) {
   }
 }
 
+// Anycrossの "body" の有無を吸収してデータを取得する共通処理
+function getBodyData() {
+  if (!cachedLarkData) return null;
+  return cachedLarkData.body ? cachedLarkData.body : cachedLarkData;
+}
+
 function renderApoEfficiency(elementId, dataKey) {
   const contentElement = document.getElementById(elementId);
   if (!contentElement) return;
 
   const cardElement = contentElement.closest('.card');
+  const bodyData = getBodyData();
+  
+  let val = bodyData ? bodyData[dataKey] : null;
 
-  // ?. を使わない安全な判定
-  let val = cachedLarkData ? cachedLarkData[dataKey] : null;
+  // 入れ子構造（[object Object]）から正確に数値だけを抜き出す
   if (val && typeof val === 'object') {
-    if (Array.isArray(val) && val[0] && val[0].text) {
-      val = val[0].text;
-    } else if (val.value && Array.isArray(val.value) && val.value[0] && val.value[0].text) {
-      val = val.value[0].text;
-    } else if (val.text) {
-      val = val.text;
+    if (val["アポ効率"] && val["アポ効率"].value && val["アポ効率"].value[0] !== undefined) {
+      val = val["アポ効率"].value[0];
+    } else if (val.value && Array.isArray(val.value) && val.value[0] !== undefined) {
+      val = val.value[0].text !== undefined ? val.value[0].text : val.value[0];
     }
   }
 
-  if (val !== undefined && val !== null && val !== "") {
+  // 小数点第2位までに四捨五入する（例: 1.8775... -> 1.88）
+  if (typeof val === 'number') {
+    val = Math.round(val * 100) / 100; 
+  }
+
+  if (val !== undefined && val !== null && val !== "" && !Number.isNaN(val)) {
     contentElement.classList.add("loaded");
     contentElement.innerHTML = `
       <div class="account-row account-row-first">
         <span class="account-label">今月の効率</span>
-        <strong class="account-value">${val}</strong>
+        <strong class="account-value" style="font-size: 18px; color: #d9534f;">${val}</strong>
       </div>
     `;
     if (cardElement) cardElement.style.display = 'block'; 
@@ -104,10 +114,9 @@ function renderAccountInfo(elementId, idKey, pwKey) {
   if (!contentElement) return; 
 
   const cardElement = contentElement.closest('.card');
-  const data = cachedLarkData;
+  const bodyData = getBodyData();
   
-  // ?. を使わない安全な判定
-  const idPwData = data ? data["ID/PW"] : null;
+  const idPwData = bodyData ? bodyData["ID/PW"] : null;
   
   let accountId = null;
   let accountPw = null;
@@ -156,7 +165,8 @@ function openLinkDirectly(dataKey) {
     return;
   }
 
-  const targetUrl = cachedLarkData[dataKey];
+  const bodyData = getBodyData();
+  const targetUrl = bodyData ? bodyData[dataKey] : null;
 
   if (targetUrl && typeof targetUrl === "string" && targetUrl.match(/^https?:\/\//)) {
     if (targetUrl.includes("open.larksuite.com/open-apis/")) {
