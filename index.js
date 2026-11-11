@@ -66,7 +66,6 @@ async function fetchLarkData(userId, apiUrl) {
   }
 }
 
-// Anycrossの "body" の有無を吸収してデータを取得する共通処理
 function getBodyData() {
   if (!cachedLarkData) return null;
   return cachedLarkData.body ? cachedLarkData.body : cachedLarkData;
@@ -81,7 +80,6 @@ function renderApoEfficiency(elementId, dataKey) {
   
   let val = bodyData ? bodyData[dataKey] : null;
 
-  // 入れ子構造（[object Object]）から正確に数値だけを抜き出す
   if (val && typeof val === 'object') {
     if (val["アポ効率"] && val["アポ効率"].value && val["アポ効率"].value[0] !== undefined) {
       val = val["アポ効率"].value[0];
@@ -89,18 +87,33 @@ function renderApoEfficiency(elementId, dataKey) {
       val = val.value[0].text !== undefined ? val.value[0].text : val.value[0];
     }
   }
+  
+  if (typeof val === 'string' && !isNaN(parseFloat(val))) {
+    val = parseFloat(val);
+  }
 
-  // 小数点第2位までに四捨五入する（例: 1.8775... -> 1.88）
   if (typeof val === 'number') {
+    if (cardElement) {
+      if (val < 1) {
+        cardElement.style.backgroundColor = "#e0f7fa"; 
+      } else if (val >= 1 && val < 1.5) {
+        cardElement.style.backgroundColor = "#e8f5e9"; 
+      } else if (val >= 1.5 && val < 2) {
+        cardElement.style.backgroundColor = "#fce4ec"; 
+      } else if (val >= 2) {
+        cardElement.style.backgroundColor = "#f3e5f5"; 
+      }
+    }
     val = Math.round(val * 100) / 100; 
   }
 
-  if (val !== undefined && val !== null && val !== "" && !Number.isNaN(val)) {
+  // ★変更箇所： Number.isNaN(val) を isNaN(val) に修正してエラーを回避
+  if (val !== undefined && val !== null && val !== "" && !isNaN(val)) {
     contentElement.classList.add("loaded");
     contentElement.innerHTML = `
       <div class="account-row account-row-first">
         <span class="account-label">今月の効率</span>
-        <strong class="account-value" style="font-size: 18px; color: #d9534f;">${val}</strong>
+        <strong class="account-value" style="font-size: 20px; color: #111;">${val}</strong>
       </div>
     `;
     if (cardElement) cardElement.style.display = 'block'; 
