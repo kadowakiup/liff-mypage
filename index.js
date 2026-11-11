@@ -4,6 +4,9 @@ window.onload = async function () {
   const CLOUDFLARE_API_URL = "https://mypage.kadowaki-universal-prime.workers.dev/";
   
   setupButtonListeners();
+  
+  // ★ 雪だるまのメッセージ切り替えを開始
+  setupSnowmanSpeech();
 
   try {
     await liff.init({ liffId: "2009827198-CXcOChHP" });
@@ -28,6 +31,40 @@ window.onload = async function () {
     hideLoading();
   }
 };
+
+// =========================================================
+// ★追加：雪だるまのランダムメッセージ機能
+// =========================================================
+function setupSnowmanSpeech() {
+  const speechBubble = document.getElementById("snowman-speech");
+  if (!speechBubble) return;
+
+  // 表示させたいメッセージのリスト
+  const messages = [
+    "今日も一日<br>頑張りましょう！",
+    "お疲れ様です☕️",
+    "あったかくして<br>風邪ひかないでね⛄️",
+    "いつも<br>ありがとうございます！",
+    "自分のペースで<br>大丈夫ですよ〜",
+    "休憩も<br>大事にしてくださいね🍵",
+    "アポ効率いい感じ<br>ですね！✨",
+    "マイページへ<br>ようこそ！❄️"
+  ];
+
+  // 6秒（6000ミリ秒）ごとにメッセージを切り替える
+  setInterval(() => {
+    // 1. まず吹き出しを透明にする（フェードアウト）
+    speechBubble.style.opacity = '0';
+
+    // 2. 0.5秒後に文字を入れ替えて、再び表示（フェードイン）
+    setTimeout(() => {
+      const randomIndex = Math.floor(Math.random() * messages.length);
+      speechBubble.innerHTML = messages[randomIndex];
+      speechBubble.style.opacity = '1';
+    }, 500);
+
+  }, 6000);
+}
 
 function hideLoading() {
   const overlay = document.getElementById('loadingOverlay');
@@ -93,7 +130,6 @@ function renderApoEfficiency(elementId, dataKey, cardId) {
   let message = ""; 
 
   if (typeof val === 'number') {
-    // ガラス感を残すため透過度（0.4）で色付け
     if (val < 1) {
       cardElement.style.backgroundColor = "rgba(178, 235, 242, 0.4)"; 
       message = "次も頑張りましょう！🌱";

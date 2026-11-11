@@ -431,3 +431,40 @@ body {
     opacity: 0; /* 下に到達したら消える */
   }
 }
+/* =========================================================
+   8. 雪だるまの吹き出し
+========================================================= */
+.snowman-speech {
+  position: absolute;
+  top: -45px;
+  left: 65px; /* 雪だるまの顔の右上に配置 */
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #4a6b5d;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  white-space: nowrap; /* 改行は<br>に任せる */
+  z-index: 10;
+  opacity: 0;
+  animation: popIn 0.5s forwards 1s; /* 画面を開いて1秒後にフワッと登場 */
+  transition: opacity 0.5s ease; /* 文字が変わる時のフェード効果 */
+}
+
+/* 吹き出しのしっぽ（三角形） */
+.snowman-speech::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 12px;
+  border-top: 8px solid rgba(255, 255, 255, 0.95);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+}
+
+@keyframes popIn {
+  0% { transform: translateY(10px) scale(0.9); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
