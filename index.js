@@ -3,7 +3,6 @@ let cachedLarkData = null;
 window.onload = async function () {
   const CLOUDFLARE_API_URL = "https://mypage.kadowaki-universal-prime.workers.dev/";
   
-  // イベントリスナーをセット
   setupButtonListeners();
 
   try {
@@ -16,16 +15,20 @@ window.onload = async function () {
     const profile = await liff.getProfile();
     const userId = profile.userId;
 
-    // データ取得
     await fetchLarkData(userId, CLOUDFLARE_API_URL);
 
   } catch (err) {
     console.error("LIFF Init Error:", err);
     alert("初期化エラーが発生しました");
+    hideLoading();
   }
 };
 
-// === Larkのデータを取得する関数 ===
+function hideLoading() {
+  const overlay = document.getElementById('loadingOverlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
 async function fetchLarkData(userId, apiUrl) {
   try {
     const response = await fetch(`${apiUrl}?userId=${userId}`, {
@@ -39,33 +42,43 @@ async function fetchLarkData(userId, apiUrl) {
 
     cachedLarkData = await response.json();
 
-    // データの描画関数を呼び出し
-    renderApoEfficiency("apo-data-content", "月間アポ効率"); // ★追加
+    renderApoEfficiency("apo-data-content", "月間アポ効率");
     renderAccountInfo("nqc-data-content", "Neo Quick Call", "Neo Quick Call PW");
 
   } catch (error) {
     console.error("Fetch Data Error:", error);
     
-    // エラー時の表示処理
-    const nqcContent = document.getElementById("nqc-data-content");
-    if (nqcContent) nqcContent.innerHTML = `<span class="error-text">データの取得に失敗しました。</span>`;
-    
+    // エラー時は枠ごと非表示
     const apoContent = document.getElementById("apo-data-content");
-    if (apoContent) apoContent.innerHTML = `<span class="error-text">データの取得に失敗しました。</span>`;
+    if (apoContent) {
+      const apoCard = apoContent.closest('.card');
+      if (apoCard) apoCard.style.display = 'none';
+    }
+    
+    const nqcContent = document.getElementById("nqc-data-content");
+    if (nqcContent) {
+      const nqcCard = nqcContent.closest('.card');
+      if (nqcCard) nqcCard.style.display = 'none';
+    }
+    
+    alert("データの取得に失敗しました。");
+  } finally {
+    hideLoading();
   }
 }
 
-// === ★追加：月間アポ効率をHTMLに描画する関数 ===
 function renderApoEfficiency(elementId, dataKey) {
   const contentElement = document.getElementById(elementId);
   if (!contentElement) return;
 
-  // Larkからのデータ構造のブレを吸収（直接の文字列、またはオブジェクトの配列）
-  let val = cachedLarkData?.[dataKey];
+  const cardElement = contentElement.closest('.card');
+
+  // ?. を使わない安全な判定
+  let val = cachedLarkData ? cachedLarkData[dataKey] : null;
   if (val && typeof val === 'object') {
-    if (Array.isArray(val) && val[0]?.text) {
+    if (Array.isArray(val) && val[0] && val[0].text) {
       val = val[0].text;
-    } else if (val.value && Array.isArray(val.value) && val.value[0]?.text) {
+    } else if (val.value && Array.isArray(val.value) && val.value[0] && val.value[0].text) {
       val = val.value[0].text;
     } else if (val.text) {
       val = val.text;
@@ -80,20 +93,33 @@ function renderApoEfficiency(elementId, dataKey) {
         <strong class="account-value">${val}</strong>
       </div>
     `;
+    if (cardElement) cardElement.style.display = 'block'; 
   } else {
-    contentElement.innerHTML = `情報が登録されていません`;
+    if (cardElement) cardElement.style.display = 'none';
   }
 }
 
-// === アカウント情報をHTMLに描画する共通関数 ===
 function renderAccountInfo(elementId, idKey, pwKey) {
   const contentElement = document.getElementById(elementId);
-  if (!contentElement) return; // HTMLに要素がない場合はスキップ
+  if (!contentElement) return; 
 
+  const cardElement = contentElement.closest('.card');
   const data = cachedLarkData;
-  const idPwData = data?.["ID/PW"];
-  const accountId = idPwData?.[idKey]?.value?.[0]?.text;
-  const accountPw = idPwData?.[pwKey]?.value?.[0]?.text;
+  
+  // ?. を使わない安全な判定
+  const idPwData = data ? data["ID/PW"] : null;
+  
+  let accountId = null;
+  let accountPw = null;
+  
+  if (idPwData) {
+    if (idPwData[idKey] && idPwData[idKey].value && idPwData[idKey].value[0]) {
+      accountId = idPwData[idKey].value[0].text;
+    }
+    if (idPwData[pwKey] && idPwData[pwKey].value && idPwData[pwKey].value[0]) {
+      accountPw = idPwData[pwKey].value[0].text;
+    }
+  }
 
   if (accountId || accountPw) {
     contentElement.classList.add("loaded");
@@ -107,36 +133,23 @@ function renderAccountInfo(elementId, idKey, pwKey) {
         <strong class="account-value">${accountPw || "未登録"}</strong>
       </div>
     `;
+    if (cardElement) cardElement.style.display = 'block';
   } else {
-    contentElement.innerHTML = `情報が登録されていません`;
+    if (cardElement) cardElement.style.display = 'none';
   }
 }
 
-// === ボタンのクリックイベントを設定する関数 ===
 function setupButtonListeners() {
   const btnRule = document.getElementById("btn-rule");
-  if (btnRule) {
-    btnRule.addEventListener("click", () => {
-      openLinkDirectly("今月分ルール");
-    });
-  }
+  if (btnRule) btnRule.addEventListener("click", () => openLinkDirectly("今月分ルール"));
 
   const btnSalaryCurrent = document.getElementById("btn-salary-current");
-  if (btnSalaryCurrent) {
-    btnSalaryCurrent.addEventListener("click", () => {
-      openLinkDirectly("今月分給与条件");
-    });
-  }
+  if (btnSalaryCurrent) btnSalaryCurrent.addEventListener("click", () => openLinkDirectly("今月分給与条件"));
 
   const btnSalaryPrev = document.getElementById("btn-salary-prev");
-  if (btnSalaryPrev) {
-    btnSalaryPrev.addEventListener("click", () => {
-      openLinkDirectly("先月分給与条件");
-    });
-  }
+  if (btnSalaryPrev) btnSalaryPrev.addEventListener("click", () => openLinkDirectly("先月分給与条件"));
 }
 
-// === 直接リンクを開く（無い・開けない場合はポップアップを出す）関数 ===
 function openLinkDirectly(dataKey) {
   if (!cachedLarkData) {
     alert("データを読み込んでいます。数秒待ってから再度タップしてください。");
