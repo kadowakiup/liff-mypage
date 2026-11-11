@@ -35,7 +35,6 @@ function setupSnowmanSpeech() {
   if (!speechBubble) return;
 
   const messages = [
-    "今日も一日<br>頑張ろう！",
     "お疲れ様～☕️",
     "あったかくして<br>風邪ひかないでね⛄️",
     "いつもありがとう！",
