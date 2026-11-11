@@ -47,14 +47,12 @@ async function fetchLarkData(userId, apiUrl) {
 
     cachedLarkData = await response.json();
 
-    // ★ 第3引数に「隠すカード自体のID」を渡して確実に非表示にする
     renderApoEfficiency("apo-data-content", "月間アポ効率", "apo-card");
     renderAccountInfo("nqc-data-content", "Neo Quick Call", "Neo Quick Call PW", "nqc-card");
 
   } catch (error) {
     console.error("Fetch Data Error:", error);
     
-    // エラー時もカードごと確実に隠す
     const apoCard = document.getElementById("apo-card");
     if (apoCard) apoCard.style.display = 'none';
     
@@ -95,23 +93,23 @@ function renderApoEfficiency(elementId, dataKey, cardId) {
   let message = ""; 
 
   if (typeof val === 'number') {
+    // ガラス感を残すため透過度（0.4）で色付け
     if (val < 1) {
-      cardElement.style.background = "rgba(224, 247, 250, 0.7)"; 
+      cardElement.style.backgroundColor = "rgba(178, 235, 242, 0.4)"; 
       message = "次も頑張りましょう！🌱";
     } else if (val >= 1 && val < 1.5) {
-      cardElement.style.background = "rgba(232, 245, 233, 0.7)"; 
+      cardElement.style.backgroundColor = "rgba(200, 230, 201, 0.4)"; 
       message = "安定したペースです✨";
     } else if (val >= 1.5 && val < 2) {
-      cardElement.style.background = "rgba(252, 228, 236, 0.7)"; 
+      cardElement.style.backgroundColor = "rgba(248, 187, 208, 0.4)"; 
       message = "素晴らしい効率です！🔥";
     } else if (val >= 2) {
-      cardElement.style.background = "rgba(243, 229, 245, 0.7)"; 
+      cardElement.style.backgroundColor = "rgba(225, 190, 231, 0.4)"; 
       message = "圧倒的な成果ですね！👑";
     }
     val = Math.round(val * 100) / 100; 
   }
 
-  // ★ データが存在しない場合はここで確実にカード全体を非表示
   if (val !== undefined && val !== null && val !== "" && !isNaN(val)) {
     contentElement.classList.add("loaded");
     contentElement.innerHTML = `
@@ -147,7 +145,6 @@ function renderAccountInfo(elementId, idKey, pwKey, cardId) {
     }
   }
 
-  // ★ データが存在しない場合はここで確実にカード全体を非表示
   if (accountId || accountPw) {
     contentElement.classList.add("loaded");
     contentElement.innerHTML = `
