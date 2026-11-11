@@ -434,10 +434,11 @@ body {
 /* =========================================================
    8. 雪だるまの吹き出し
 ========================================================= */
+/* style.css の一番下の方 */
 .snowman-speech {
   position: absolute;
   top: -45px;
-  left: 65px; /* 雪だるまの顔の右上に配置 */
+  left: 65px;
   background: rgba(255, 255, 255, 0.95);
   padding: 8px 12px;
   border-radius: 12px;
@@ -446,11 +447,12 @@ body {
   color: #4a6b5d;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   text-align: center;
-  white-space: nowrap; /* 改行は<br>に任せる */
+  white-space: nowrap;
   z-index: 10;
   opacity: 0;
-  animation: popIn 0.5s forwards 1s; /* 画面を開いて1秒後にフワッと登場 */
-  transition: opacity 0.5s ease; /* 文字が変わる時のフェード効果 */
+  animation: popIn 0.5s forwards 1s; 
+  /* ▼ 変更：0.5s から 1.2s にして、ゆっくりフワッと消えるようにする */
+  transition: opacity 1.2s ease; 
 }
 
 /* 吹き出しのしっぽ（三角形） */

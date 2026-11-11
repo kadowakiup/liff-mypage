@@ -4,8 +4,6 @@ window.onload = async function () {
   const CLOUDFLARE_API_URL = "https://mypage.kadowaki-universal-prime.workers.dev/";
   
   setupButtonListeners();
-  
-  // ★ 雪だるまのメッセージ切り替えを開始
   setupSnowmanSpeech();
 
   try {
@@ -32,36 +30,31 @@ window.onload = async function () {
   }
 };
 
-// =========================================================
-// ★追加：雪だるまのランダムメッセージ機能
-// =========================================================
 function setupSnowmanSpeech() {
   const speechBubble = document.getElementById("snowman-speech");
   if (!speechBubble) return;
 
-  // 表示させたいメッセージのリスト
   const messages = [
-    "今日も一日<br>頑張りましょう！",
-    "お疲れ様です☕️",
+    "今日も一日<br>頑張ろう！",
+    "お疲れ様～☕️",
     "あったかくして<br>風邪ひかないでね⛄️",
-    "いつも<br>ありがとうございます！",
-    "自分のペースで<br>大丈夫ですよ〜",
-    "休憩も<br>大事にしてくださいね🍵",
-    "アポ効率いい感じ<br>ですね！✨",
+    "いつもありがとう！",
+    "休憩も<br>大事にしてね🍵",
     "マイページへ<br>ようこそ！❄️"
   ];
 
-  // 6秒（6000ミリ秒）ごとにメッセージを切り替える
+  // 6秒ごとにメッセージを切り替える
   setInterval(() => {
-    // 1. まず吹き出しを透明にする（フェードアウト）
+    // 1. 吹き出しを透明にする（1.2秒かけてゆっくり消える）
     speechBubble.style.opacity = '0';
 
-    // 2. 0.5秒後に文字を入れ替えて、再び表示（フェードイン）
+    // 2. ★変更：CSSに合わせて1.2秒（1200ミリ秒）待ってから文字を入れ替える
     setTimeout(() => {
       const randomIndex = Math.floor(Math.random() * messages.length);
       speechBubble.innerHTML = messages[randomIndex];
+      // 文字を入れ替えたら再び表示（1.2秒かけてゆっくり現れる）
       speechBubble.style.opacity = '1';
-    }, 500);
+    }, 1200); 
 
   }, 6000);
 }
@@ -132,16 +125,16 @@ function renderApoEfficiency(elementId, dataKey, cardId) {
   if (typeof val === 'number') {
     if (val < 1) {
       cardElement.style.backgroundColor = "rgba(178, 235, 242, 0.4)"; 
-      message = "次も頑張りましょう！🌱";
+      message = "次も頑張ろう！🌱";
     } else if (val >= 1 && val < 1.5) {
       cardElement.style.backgroundColor = "rgba(200, 230, 201, 0.4)"; 
-      message = "安定したペースです✨";
+      message = "安定したペースだね✨";
     } else if (val >= 1.5 && val < 2) {
       cardElement.style.backgroundColor = "rgba(248, 187, 208, 0.4)"; 
-      message = "素晴らしい効率です！🔥";
+      message = "素晴らしい成績！🔥<br>もっと上を目指しちゃう？？";
     } else if (val >= 2) {
       cardElement.style.backgroundColor = "rgba(225, 190, 231, 0.4)"; 
-      message = "圧倒的な成果ですね！👑";
+      message = "君はもうアポのスペシャリストでございます👑";
     }
     val = Math.round(val * 100) / 100; 
   }
