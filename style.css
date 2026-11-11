@@ -272,3 +272,162 @@ body {
   0% { transform: translateY(0) scale(1); }
   100% { transform: translateY(-15px) scale(1.1); }
 }
+/* =========================================================
+   7. 冬の特別アニメーション（雪だるま＆雪）
+========================================================= */
+.winter-scene {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40vh; /* 画面下半分をカバー */
+  pointer-events: none; /* タップの邪魔にならないようにする */
+  z-index: 10;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+/* 雪だるま全体 */
+.snowman-container {
+  position: relative;
+  margin-bottom: 20px;
+  animation: gentle-bounce 3s infinite ease-in-out;
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+}
+
+.snowman-head {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  margin: 0 auto -12px auto;
+  position: relative;
+  z-index: 2;
+  box-shadow: inset -5px -5px 10px rgba(0,0,0,0.05);
+}
+
+.snowman-body {
+  width: 90px;
+  height: 90px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  position: relative;
+  z-index: 1;
+  box-shadow: inset -8px -8px 15px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 30px;
+}
+
+/* 顔のパーツ */
+.eye {
+  width: 6px;
+  height: 6px;
+  background: #2c4238;
+  border-radius: 50%;
+  position: absolute;
+  top: 22px;
+}
+.eye.left { left: 16px; }
+.eye.right { right: 16px; }
+
+.cheek {
+  width: 10px;
+  height: 6px;
+  background: #ffb6c1;
+  border-radius: 50%;
+  position: absolute;
+  top: 28px;
+  opacity: 0.7;
+}
+.cheek.left { left: 8px; }
+.cheek.right { right: 8px; }
+
+.nose {
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 14px solid #ff9e5e;
+  position: absolute;
+  top: 24px;
+  left: 28px;
+}
+
+/* マフラー */
+.scarf {
+  width: 64px;
+  height: 12px;
+  background: #e66a6a;
+  border-radius: 6px;
+  position: absolute;
+  top: 48px;
+  left: -2px;
+  z-index: 3;
+}
+.scarf-tail {
+  width: 14px;
+  height: 30px;
+  background: #e66a6a;
+  border-radius: 6px;
+  position: absolute;
+  top: 48px;
+  right: 12px;
+  z-index: 4;
+  transform: rotate(-15deg);
+}
+
+/* 胴体のボタン */
+.button {
+  width: 8px;
+  height: 8px;
+  background: #2c4238;
+  border-radius: 50%;
+  margin-bottom: 12px;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* 雪を降らせるアニメーション（修正版） */
+.snowflakes {
+  position: absolute;
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%;
+}
+
+.snowflake {
+  position: absolute;
+  top: -30px; /* ★明示的に一番上からスタートさせる */
+  color: rgba(255, 255, 255, 0.9);
+  animation: fall linear infinite;
+  display: inline-block;
+}
+
+/* 画面の横幅（left）を均等に散らして配置 */
+.snowflake:nth-child(1) { left: 10%; animation-duration: 8s; font-size: 14px; }
+.snowflake:nth-child(2) { left: 30%; animation-duration: 12s; animation-delay: 2s; font-size: 18px; }
+.snowflake:nth-child(3) { left: 50%; animation-duration: 9s; animation-delay: 4s; font-size: 12px; }
+.snowflake:nth-child(4) { left: 70%; animation-duration: 11s; animation-delay: 1s; font-size: 20px; }
+.snowflake:nth-child(5) { left: 90%; animation-duration: 14s; animation-delay: 3s; font-size: 16px; }
+
+@keyframes fall {
+  0% { 
+    transform: translateY(0) rotate(0deg); 
+    opacity: 0; 
+  }
+  10% {
+    opacity: 1; /* 少し降ってからフワッと現れる */
+  }
+  100% { 
+    transform: translateY(40vh) rotate(360deg); 
+    opacity: 0; /* 下に到達したら消える */
+  }
+}
