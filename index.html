@@ -3,69 +3,82 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>アカウント情報</title>
+    <title>マイページ</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- 丸みのある優しいフォント（M PLUS Rounded 1c）を追加 -->
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="index.js"></script>
   </head>
   <body>
-   <!-- ▼ ローディング画面（オーバーレイ） -->
+    <!-- ローディング画面（可愛いぴょんぴょんドット） -->
     <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
       <div class="loading-content">
-        
-        <!-- ★変更：くるくる（spinner）の代わりに、3つのドットを配置 -->
         <div class="cute-dots">
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span>
         </div>
-        
-        <p>データ読み込み中...<br>ちょっとまっててね！！</p>
+        <p>データ読み込み中...<br>少々お待ちください</p>
       </div>
     </div>
 
-    <div class="menu-container">
-      <h2>アカウント・条件情報</h2>
+    <!-- 背景のふんわりした装飾 -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
 
-      <!-- ▼ 追加：月間アポ効率 -->
-      <div class="card">
-        <h3 class="card-title">月間アポ効率</h3>
-        <div id="apo-data-content" class="data-content">読み込み中...</div>
-      </div>
-
-      <!-- ▼ アカウント情報：Neo Quick Call -->
-      <div class="card">
-        <h3 class="card-title">Neo Quick Call</h3>
-        <div id="nqc-data-content" class="data-content">読み込み中...</div>
-      </div>
+    <div class="app-container">
       
-      <!-- ▼ 情報確認ボタン -->
-      <div class="button-group">
-        <!-- 打刻・シフトルール（上段：横長のまま） -->
-        <button id="btn-rule" class="menu-btn notion-btn">
-          📖 打刻・シフトルール
-        </button>
-
-        <!-- 給与条件（下段：横並び） -->
-        <div class="salary-buttons-wrapper">
-          <!-- 今月分（目立つ色） -->
-          <button id="btn-salary-current" class="btn-square btn-current">
-            <span class="btn-icon">💰</span>
-            <span class="btn-text">今月<br>給与条件</span>
-          </button>
-
-          <!-- 先月分（控えめな色） -->
-          <button id="btn-salary-prev" class="btn-square btn-prev">
-            <span class="btn-icon">🕒</span>
-            <span class="btn-text">先月<br>給与条件</span>
-          </button>
+      <!-- ヘッダー（挨拶とユーザー名） -->
+      <header class="page-header">
+        <div class="header-text">
+          <span class="greeting">こんにちは</span>
+          <h1 class="username"><span id="display-name">ゲスト</span>さん</h1>
         </div>
-      </div>
+        <div class="profile-icon">
+          <img id="profile-img" src="https://via.placeholder.com/150/cccccc/ffffff?text=👤" alt="profile">
+        </div>
+      </header>
+
+      <main>
+        <!-- ▼ 月間アポ効率（大きく目立たせるメインカード） -->
+        <section class="glass-card main-card">
+          <div class="card-header">
+            <h2 class="card-title">今月の月間アポ効率</h2>
+          </div>
+          <div id="apo-data-content" class="data-content">読み込み中...</div>
+        </section>
+
+        <!-- ▼ Neo Quick Call -->
+        <section class="glass-card sub-card">
+          <h2 class="card-title">Neo Quick Call</h2>
+          <div id="nqc-data-content" class="data-content">読み込み中...</div>
+        </section>
+        
+        <!-- ▼ 各種リンクボタン -->
+        <section class="action-section">
+          <!-- 打刻・シフトルール -->
+          <button id="btn-rule" class="glass-btn btn-full">
+            <span class="btn-icon">📖</span> 打刻・シフトルール
+          </button>
+
+          <!-- 給与条件（横並び） -->
+          <div class="salary-buttons-wrapper">
+            <button id="btn-salary-current" class="glass-btn btn-half">
+              <span class="btn-icon">💰</span>
+              <div class="btn-text">今月分<br>給与条件</div>
+            </button>
+            <button id="btn-salary-prev" class="glass-btn btn-half outline">
+              <span class="btn-icon">🕒</span>
+              <div class="btn-text">先月分<br>給与条件</div>
+            </button>
+          </div>
+        </section>
+      </main>
+
     </div>
   </body>
 </html>

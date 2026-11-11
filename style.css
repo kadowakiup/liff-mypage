@@ -1,282 +1,277 @@
 @charset "UTF-8";
 
 /* =========================================================
-   1. 全体のベース設定
+   1. 全体のベース設定（すりガラス・淡いグリーン系）
 ========================================================= */
 body {
-  font-family: 'Noto Sans', 'Roboto', sans-serif;
-  background-color: #E1F5FE; /* 背景を優しい水色に統一 */
+  /* 丸みのある優しいフォント */
+  font-family: 'M PLUS Rounded 1c', 'Roboto', sans-serif; 
+  /* 画像に近い淡いグリーンのグラデーション */
+  background: linear-gradient(135deg, #b0e5d5 0%, #d8f0e6 50%, #e8f5ed 100%);
   margin: 0;
   padding: 0;
-  color: #333;
+  color: #3b4d45; /* ダークグリーングレー（柔らかい黒） */
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* メニュー全体を囲むコンテナ */
-.menu-container {
+/* --- 背景のふんわり装飾（オーブ） --- */
+.bg-shape {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(40px);
+  z-index: -1;
+  opacity: 0.6;
+}
+.shape-1 {
+  width: 200px;
+  height: 200px;
+  background-color: #8edbc4;
+  top: -50px;
+  right: -50px;
+}
+.shape-2 {
+  width: 250px;
+  height: 250px;
+  background-color: #c4eadc;
+  bottom: 100px;
+  left: -80px;
+}
+.shape-3 {
+  width: 150px;
+  height: 150px;
+  background-color: #a8e0d3;
+  bottom: -20px;
+  right: 20px;
+}
+
+/* スマホ表示用のコンテナ */
+.app-container {
   max-width: 400px;
   margin: 0 auto;
-  padding: 20px;
-  background-color: transparent; /* 背景の水色を活かすため透明に */
+  padding: 30px 20px 40px 20px;
 }
-
-/* タイトル（シフト管理など） */
-.menu-container h2 {
-  font-size: 20px;
-  text-align: center;
-  margin-bottom: 24px;
-}
-
 
 /* =========================================================
-   2. メインボタン（上段：打刻・シフトルール）
+   2. ヘッダー（挨拶・プロフィール）
 ========================================================= */
-.menu-btn {
-  display: block;
-  width: 100%;
-  padding: 14px;
-  font-size: 15px;
-  font-weight: bold;
-  color: #333;
-  background-color: #85e966;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  transition: background-color 0.2s;
-}
-
-.menu-btn:active {
-  background-color: #f0f0f0;
-}
-
-
-/* =========================================================
-   3. 下段ボタン（今月・先月給与条件の横並び）
-========================================================= */
-.salary-buttons-wrapper {
+.page-header {
   display: flex;
   justify-content: space-between;
-  gap: 15px; /* ボタン同士の隙間 */
-  margin-top: 20px; /* 上のボタンからの余白 */
-  width: 100%;
-}
-
-/* 正方形（少し縦長）ボタンの共通スタイル */
-.btn-square {
-  flex: 1; /* 横幅を半分ずつ均等に */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  aspect-ratio: 4 / 5; /* 4:5の縦長（完全な正方形にするなら 1 / 1） */
-  border-radius: 12px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.1s, opacity 0.2s;
+  margin-bottom: 24px;
+  padding: 0 5px;
 }
-
-/* タップした時の沈み込みエフェクト */
-.btn-square:active {
-  transform: scale(0.96);
-  opacity: 0.8;
+.header-text .greeting {
+  font-size: 13px;
+  color: #5c7c70;
+  font-weight: 500;
 }
-
-/* アイコンと文字のサイズ調整 */
-.btn-square .btn-icon {
-  font-size: 32px;
-  margin-bottom: 8px;
+.header-text .username {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 4px 0 0 0;
+  color: #2c4238;
 }
-
-.btn-square .btn-text {
-  font-size: 15px;
-  line-height: 1.4;
-  text-align: center;
+.profile-icon img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.6);
+  background-color: #fff;
 }
-
-/* --- ボタンの色分け --- */
-/* 今月分：目立つ青色 */
-.btn-current {
-  background-color: #007AFF; 
-  color: #FFFFFF;
-}
-
-/* 先月分：ご要望に合わせて薄めの色（少し青みがかった明るいグレー）に変更 */
-.btn-prev {
-  background-color: #A9B4C2;
-  color: #FFFFFF;
-}
-
 
 /* =========================================================
-   4. 旧マイページ関連（不要であればここから下は削除可能）
+   3. すりガラス風カード（グラスモーフィズム）
 ========================================================= */
-
-/* アカウント情報などのカード型デザイン */
-.card {
-  margin: 20px 0;
+.glass-card {
+  /* 半透明の白 */
+  background: rgba(255, 255, 255, 0.65);
+  /* 背景のぼかし効果 */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  /* 境界線をほんのり白くして立体感を出す */
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
   padding: 20px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  transition: background 0.3s ease;
 }
 
 .card-title {
+  font-size: 14px;
+  color: #5c7c70;
   margin: 0 0 16px 0;
-  font-size: 15px;
-  color: #333;
-  text-align: center;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* 読み込み中や未登録のテキスト */
-.data-content {
+/* =========================================================
+   4. カード内のデータ表示スタイル
+========================================================= */
+/* メインカード（アポ効率）の特大数字スタイル */
+.score-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.score-value {
+  font-size: 48px;
+  font-weight: 700;
+  color: #2c4238;
+  line-height: 1;
+}
+.score-unit {
+  font-size: 14px;
+  color: #799689;
+  font-weight: 500;
+}
+.score-message {
   font-size: 13px;
-  color: #999;
-  text-align: center;
+  color: #5c7c70;
+  margin: 8px 0 0 0;
 }
 
-/* 取得後のテキスト左寄せ */
-.data-content.loaded {
-  text-align: left;
-}
-
-/* ID/PWの行のデザイン */
+/* サブカード（Neo Quick Call等）のリストスタイル */
 .account-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed rgba(92, 124, 112, 0.2);
 }
-
-.account-row-first {
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f0f0f0;
+.account-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
-
-.account-row-second {
-  padding-top: 12px;
-}
-
 .account-label {
-  font-size: 12px;
-  color: #888;
-  letter-spacing: 0.5px;
+  font-size: 13px;
+  color: #5c7c70;
+  font-weight: 500;
 }
-
 .account-value {
   font-size: 16px;
-  color: #111;
-  user-select: all; /* 長押しでコピーしやすくする */
-  letter-spacing: 0.5px;
-  font-weight: bold;
+  font-weight: 700;
+  color: #2c4238;
+  user-select: all;
 }
 
-/* ルールや条件の詳細表示エリア */
-.details-container {
-  display: none;
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #85f1f1;
-  border-radius: 12px;
-  border: 1px solid #e9ecef;
-}
-
-.details-title {
-  margin: 0 0 12px 0;
-  font-size: 16px;
-  color: #111;
-  border-bottom: 2px solid #06c755;
-  padding-bottom: 8px;
-  display: inline-block;
-}
-
-.details-content {
-  font-size: 14px;
-  color: #444;
-  line-height: 1.6;
-  word-break: break-all;
-}
-
-/* エラー用 */
-.error-text {
-  color: #d9534f;
-  font-size: 13px;
-}
 /* =========================================================
-   5. ローディング画面（オーバーレイ）
+   5. ボタン類（角丸で優しいデザイン）
 ========================================================= */
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.85); /* 後ろが少し透ける白背景 */
-  display: flex; /* JS側でnoneと切り替えます */
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999; /* 全ての要素の一番上に表示 */
+.action-section {
+  margin-top: 24px;
 }
 
-.loading-content {
-  background-color: #ffffff;
-  padding: 30px 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+.glass-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: transform 0.1s, opacity 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.glass-btn:active {
+  transform: scale(0.97);
+  opacity: 0.8;
+}
+
+/* 横長ボタン（打刻ルール等） */
+.btn-full {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  color: #3b4d45;
+  padding: 16px;
+  font-size: 15px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+.btn-full .btn-icon {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+/* 横並びボタン（給与条件） */
+.salary-buttons-wrapper {
+  display: flex;
+  gap: 12px;
+}
+.btn-half {
+  flex: 1;
+  flex-direction: column;
+  padding: 16px 12px;
+  background: #ffffff; /* 今月分は白で目立たせる */
+  color: #3b4d45;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+.btn-half.outline {
+  /* 先月分は少し透かして控えめに */
+  background: rgba(255, 255, 255, 0.4); 
+}
+.btn-half .btn-icon {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+.btn-half .btn-text {
+  font-size: 13px;
+  line-height: 1.3;
   text-align: center;
 }
 
+/* =========================================================
+   6. ローディング画面（可愛いドット）
+========================================================= */
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(240, 250, 245, 0.85); /* 全体テーマに合わせた淡い色 */
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.loading-content {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
 .loading-content p {
   margin: 0;
   font-size: 14px;
-  color: #333;
+  color: #5c7c70;
+  font-weight: 700;
   line-height: 1.5;
-  font-weight: bold;
 }
-/* ▼ 変更：ぴょんぴょん跳ねる可愛いドットのアニメーション */
 .cute-dots {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px; /* ドット同士の隙間 */
+  gap: 10px;
   margin-bottom: 20px;
-  height: 30px; /* 跳ねるための空間を確保 */
+  height: 30px;
 }
-
 .cute-dots span {
   width: 14px;
   height: 14px;
   border-radius: 50%;
   animation: bounceDots 0.5s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5);
 }
+.cute-dots span:nth-child(1) { background-color: #ff9eb5; animation-delay: 0s; }
+.cute-dots span:nth-child(2) { background-color: #ffd166; animation-delay: 0.15s; }
+.cute-dots span:nth-child(3) { background-color: #8edbc4; animation-delay: 0.3s; }
 
-/* 1つ目の丸（ピンク） */
-.cute-dots span:nth-child(1) {
-  background-color: #ff9eb5;
-  animation-delay: 0s;
-}
-
-/* 2つ目の丸（イエロー） */
-.cute-dots span:nth-child(2) {
-  background-color: #ffd166;
-  animation-delay: 0.15s;
-}
-
-/* 3つ目の丸（ライトブルー） */
-.cute-dots span:nth-child(3) {
-  background-color: #4ea8de;
-  animation-delay: 0.3s;
-}
-
-/* 跳ねる動きの定義 */
 @keyframes bounceDots {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    transform: translateY(-15px) scale(1.1); /* 少し大きくなりながら上に跳ねる */
-  }
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-15px) scale(1.1); }
 }

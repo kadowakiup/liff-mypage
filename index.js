@@ -12,8 +12,13 @@ window.onload = async function () {
       return;
     }
 
+    // ▼ ヘッダーにLINEのユーザー名とアイコンを反映
     const profile = await liff.getProfile();
     const userId = profile.userId;
+    document.getElementById("display-name").textContent = profile.displayName;
+    if (profile.pictureUrl) {
+      document.getElementById("profile-img").src = profile.pictureUrl;
+    }
 
     await fetchLarkData(userId, CLOUDFLARE_API_URL);
 
@@ -75,7 +80,7 @@ function renderApoEfficiency(elementId, dataKey) {
   const contentElement = document.getElementById(elementId);
   if (!contentElement) return;
 
-  const cardElement = contentElement.closest('.card');
+  const cardElement = contentElement.closest('.glass-card');
   const bodyData = getBodyData();
   
   let val = bodyData ? bodyData[dataKey] : null;
@@ -92,29 +97,37 @@ function renderApoEfficiency(elementId, dataKey) {
     val = parseFloat(val);
   }
 
+  let message = ""; // 数字の下に出すコメント
+
   if (typeof val === 'number') {
+    // 新デザインに合わせた、半透明の背景色変更
     if (cardElement) {
       if (val < 1) {
-        cardElement.style.backgroundColor = "#e0f7fa"; 
+        cardElement.style.background = "rgba(224, 247, 250, 0.7)"; // 淡い水色
+        message = "次も頑張りましょう！🌱";
       } else if (val >= 1 && val < 1.5) {
-        cardElement.style.backgroundColor = "#e8f5e9"; 
+        cardElement.style.background = "rgba(232, 245, 233, 0.7)"; // 淡い緑色
+        message = "安定したペースです✨";
       } else if (val >= 1.5 && val < 2) {
-        cardElement.style.backgroundColor = "#fce4ec"; 
+        cardElement.style.background = "rgba(252, 228, 236, 0.7)"; // 淡いピンク
+        message = "素晴らしい効率です！🔥";
       } else if (val >= 2) {
-        cardElement.style.backgroundColor = "#f3e5f5"; 
+        cardElement.style.background = "rgba(243, 229, 245, 0.7)"; // 淡い紫色
+        message = "圧倒的な成果ですね！👑";
       }
     }
     val = Math.round(val * 100) / 100; 
   }
 
-  // ★変更箇所： Number.isNaN(val) を isNaN(val) に修正してエラーを回避
   if (val !== undefined && val !== null && val !== "" && !isNaN(val)) {
     contentElement.classList.add("loaded");
+    // 参考画像のように、数字を特大にして単位をつける
     contentElement.innerHTML = `
-      <div class="account-row account-row-first">
-        <span class="account-label">今月の効率</span>
-        <strong class="account-value" style="font-size: 20px; color: #111;">${val}</strong>
+      <div class="score-display">
+        <span class="score-value">${val}</span>
+        <span class="score-unit">件</span>
       </div>
+      <p class="score-message">${message}</p>
     `;
     if (cardElement) cardElement.style.display = 'block'; 
   } else {
@@ -126,7 +139,7 @@ function renderAccountInfo(elementId, idKey, pwKey) {
   const contentElement = document.getElementById(elementId);
   if (!contentElement) return; 
 
-  const cardElement = contentElement.closest('.card');
+  const cardElement = contentElement.closest('.glass-card');
   const bodyData = getBodyData();
   
   const idPwData = bodyData ? bodyData["ID/PW"] : null;
@@ -146,11 +159,11 @@ function renderAccountInfo(elementId, idKey, pwKey) {
   if (accountId || accountPw) {
     contentElement.classList.add("loaded");
     contentElement.innerHTML = `
-      <div class="account-row account-row-first">
+      <div class="account-row">
         <span class="account-label">ID</span>
         <strong class="account-value">${accountId || "未登録"}</strong>
       </div>
-      <div class="account-row account-row-second">
+      <div class="account-row">
         <span class="account-label">Password</span>
         <strong class="account-value">${accountPw || "未登録"}</strong>
       </div>
