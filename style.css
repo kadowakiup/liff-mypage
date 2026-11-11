@@ -1,11 +1,12 @@
 @charset "UTF-8";
 
 /* =========================================================
-   1. 全体のベース設定（すりガラス・淡いグリーン系）
+   1. 全体のベース設定
 ========================================================= */
 body {
   font-family: 'M PLUS Rounded 1c', 'Roboto', sans-serif; 
-  background: linear-gradient(135deg, #b0e5d5 0%, #d8f0e6 50%, #e8f5ed 100%);
+  /* ★変更：背景全体を少し濃く、深みのあるグリーンに */
+  background: linear-gradient(135deg, #97d3bc 0%, #badfce 50%, #d3efe3 100%);
   margin: 0;
   padding: 0;
   color: #3b4d45;
@@ -14,26 +15,64 @@ body {
   overflow-x: hidden;
 }
 
+/* --- 背景のふんわり装飾 --- */
 .bg-shape {
   position: fixed;
   border-radius: 50%;
   filter: blur(40px);
   z-index: -1;
-  opacity: 0.6;
+  opacity: 0.75; /* 色をくっきりさせるために不透明度をアップ */
 }
-.shape-1 { width: 200px; height: 200px; background-color: #8edbc4; top: -50px; right: -50px; }
-.shape-2 { width: 250px; height: 250px; background-color: #c4eadc; bottom: 100px; left: -80px; }
-.shape-3 { width: 150px; height: 150px; background-color: #a8e0d3; bottom: -20px; right: 20px; }
 
+/* ★変更：色を少し濃くし、ゆっくり動くアニメーション（float1〜3）を追加 */
+.shape-1 { 
+  width: 250px; height: 250px; 
+  background-color: #62cba6; 
+  top: -50px; right: -50px; 
+  animation: float1 18s ease-in-out infinite alternate;
+}
+.shape-2 { 
+  width: 300px; height: 300px; 
+  background-color: #92e0c5; 
+  bottom: 100px; left: -80px; 
+  animation: float2 22s ease-in-out infinite alternate;
+}
+.shape-3 { 
+  width: 200px; height: 200px; 
+  background-color: #78d2b6; 
+  bottom: -40px; right: 20px; 
+  animation: float3 15s ease-in-out infinite alternate;
+}
+
+/* =========================================================
+   ★追加：ゆっくり浮遊するアニメーションの動きを定義
+========================================================= */
+@keyframes float1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, 20px) scale(1.1); }
+  100% { transform: translate(20px, 40px) scale(0.9); }
+}
+@keyframes float2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.05); }
+  100% { transform: translate(-20px, -50px) scale(0.95); }
+}
+@keyframes float3 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-20px, -40px) scale(1.15); }
+  100% { transform: translate(-40px, 10px) scale(1); }
+}
+
+/* =========================================================
+   （これ以降は前回と同じです）
+========================================================= */
 .app-container {
   max-width: 400px;
   margin: 0 auto;
   padding: 30px 20px 40px 20px;
 }
 
-/* =========================================================
-   2. ヘッダー（挨拶・プロフィール）
-========================================================= */
+/* 2. ヘッダー */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -61,9 +100,7 @@ body {
   background-color: #fff;
 }
 
-/* =========================================================
-   3. すりガラス風カード
-========================================================= */
+/* 3. すりガラス風カード */
 .glass-card {
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(12px);
@@ -75,7 +112,6 @@ body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
   transition: background 0.3s ease;
 }
-
 .card-title {
   font-size: 14px;
   color: #5c7c70;
@@ -83,9 +119,7 @@ body {
   font-weight: 700;
 }
 
-/* =========================================================
-   4. カード内のデータ表示スタイル
-========================================================= */
+/* 4. カード内のデータ表示 */
 .score-display {
   display: flex;
   align-items: baseline;
@@ -107,7 +141,6 @@ body {
   color: #5c7c70;
   margin: 8px 0 0 0;
 }
-
 .account-row {
   display: flex;
   justify-content: space-between;
@@ -131,13 +164,10 @@ body {
   user-select: all;
 }
 
-/* =========================================================
-   5. ボタン類
-========================================================= */
+/* 5. ボタン類 */
 .action-section {
   margin-top: 24px;
 }
-
 .glass-btn {
   display: flex;
   align-items: center;
@@ -154,7 +184,6 @@ body {
   transform: scale(0.97);
   opacity: 0.8;
 }
-
 .btn-full {
   width: 100%;
   background: rgba(255, 255, 255, 0.8);
@@ -169,7 +198,6 @@ body {
   margin-right: 8px;
   font-size: 18px;
 }
-
 .salary-buttons-wrapper {
   display: flex;
   gap: 12px;
@@ -195,13 +223,11 @@ body {
   text-align: center;
 }
 
-/* =========================================================
-   6. ローディング画面
-========================================================= */
+/* 6. ローディング画面 */
 .loading-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background-color: rgba(240, 250, 245, 0.85); 
+  background-color: rgba(230, 245, 238, 0.85); 
   backdrop-filter: blur(5px);
   display: flex;
   flex-direction: column;
