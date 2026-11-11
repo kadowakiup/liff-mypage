@@ -7,15 +7,15 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- 丸みのある優しいフォント（M PLUS Rounded 1c）を追加 -->
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css">
+    <!-- ★末尾の ?v=2 で古いキャッシュを強制的に破棄します -->
+    <link rel="stylesheet" href="style.css?v=2">
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="index.js"></script>
+    <script src="index.js?v=2"></script>
   </head>
   <body>
-    <!-- ローディング画面（可愛いぴょんぴょんドット） -->
+    <!-- ローディング画面 -->
     <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
       <div class="loading-content">
         <div class="cute-dots">
@@ -25,14 +25,14 @@
       </div>
     </div>
 
-    <!-- 背景のふんわりした装飾 -->
+    <!-- 背景のふんわり装飾 -->
     <div class="bg-shape shape-1"></div>
     <div class="bg-shape shape-2"></div>
     <div class="bg-shape shape-3"></div>
 
     <div class="app-container">
       
-      <!-- ヘッダー（挨拶とユーザー名） -->
+      <!-- ヘッダー -->
       <header class="page-header">
         <div class="header-text">
           <span class="greeting">こんにちは</span>
@@ -44,28 +44,26 @@
       </header>
 
       <main>
-        <!-- ▼ 月間アポ効率（大きく目立たせるメインカード） -->
-        <section class="glass-card main-card">
+        <!-- ▼ 月間アポ効率（確実に隠せるように id="apo-card" を追加） -->
+        <section id="apo-card" class="glass-card main-card">
           <div class="card-header">
             <h2 class="card-title">今月の月間アポ効率</h2>
           </div>
           <div id="apo-data-content" class="data-content">読み込み中...</div>
         </section>
 
-        <!-- ▼ Neo Quick Call -->
-        <section class="glass-card sub-card">
+        <!-- ▼ Neo Quick Call（確実に隠せるように id="nqc-card" を追加） -->
+        <section id="nqc-card" class="glass-card sub-card">
           <h2 class="card-title">Neo Quick Call</h2>
           <div id="nqc-data-content" class="data-content">読み込み中...</div>
         </section>
         
         <!-- ▼ 各種リンクボタン -->
         <section class="action-section">
-          <!-- 打刻・シフトルール -->
           <button id="btn-rule" class="glass-btn btn-full">
             <span class="btn-icon">📖</span> 打刻・シフトルール
           </button>
 
-          <!-- 給与条件（横並び） -->
           <div class="salary-buttons-wrapper">
             <button id="btn-salary-current" class="glass-btn btn-half">
               <span class="btn-icon">💰</span>
@@ -78,7 +76,6 @@
           </div>
         </section>
       </main>
-
     </div>
   </body>
 </html>

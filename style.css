@@ -4,19 +4,16 @@
    1. 全体のベース設定（すりガラス・淡いグリーン系）
 ========================================================= */
 body {
-  /* 丸みのある優しいフォント */
   font-family: 'M PLUS Rounded 1c', 'Roboto', sans-serif; 
-  /* 画像に近い淡いグリーンのグラデーション */
   background: linear-gradient(135deg, #b0e5d5 0%, #d8f0e6 50%, #e8f5ed 100%);
   margin: 0;
   padding: 0;
-  color: #3b4d45; /* ダークグリーングレー（柔らかい黒） */
+  color: #3b4d45;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
 }
 
-/* --- 背景のふんわり装飾（オーブ） --- */
 .bg-shape {
   position: fixed;
   border-radius: 50%;
@@ -24,29 +21,10 @@ body {
   z-index: -1;
   opacity: 0.6;
 }
-.shape-1 {
-  width: 200px;
-  height: 200px;
-  background-color: #8edbc4;
-  top: -50px;
-  right: -50px;
-}
-.shape-2 {
-  width: 250px;
-  height: 250px;
-  background-color: #c4eadc;
-  bottom: 100px;
-  left: -80px;
-}
-.shape-3 {
-  width: 150px;
-  height: 150px;
-  background-color: #a8e0d3;
-  bottom: -20px;
-  right: 20px;
-}
+.shape-1 { width: 200px; height: 200px; background-color: #8edbc4; top: -50px; right: -50px; }
+.shape-2 { width: 250px; height: 250px; background-color: #c4eadc; bottom: 100px; left: -80px; }
+.shape-3 { width: 150px; height: 150px; background-color: #a8e0d3; bottom: -20px; right: 20px; }
 
-/* スマホ表示用のコンテナ */
 .app-container {
   max-width: 400px;
   margin: 0 auto;
@@ -75,8 +53,8 @@ body {
   color: #2c4238;
 }
 .profile-icon img {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid rgba(255,255,255,0.6);
@@ -84,15 +62,12 @@ body {
 }
 
 /* =========================================================
-   3. すりガラス風カード（グラスモーフィズム）
+   3. すりガラス風カード
 ========================================================= */
 .glass-card {
-  /* 半透明の白 */
   background: rgba(255, 255, 255, 0.65);
-  /* 背景のぼかし効果 */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  /* 境界線をほんのり白くして立体感を出す */
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 24px;
   padding: 20px;
@@ -111,7 +86,6 @@ body {
 /* =========================================================
    4. カード内のデータ表示スタイル
 ========================================================= */
-/* メインカード（アポ効率）の特大数字スタイル */
 .score-display {
   display: flex;
   align-items: baseline;
@@ -134,7 +108,6 @@ body {
   margin: 8px 0 0 0;
 }
 
-/* サブカード（Neo Quick Call等）のリストスタイル */
 .account-row {
   display: flex;
   justify-content: space-between;
@@ -159,7 +132,7 @@ body {
 }
 
 /* =========================================================
-   5. ボタン類（角丸で優しいデザイン）
+   5. ボタン類
 ========================================================= */
 .action-section {
   margin-top: 24px;
@@ -182,7 +155,6 @@ body {
   opacity: 0.8;
 }
 
-/* 横長ボタン（打刻ルール等） */
 .btn-full {
   width: 100%;
   background: rgba(255, 255, 255, 0.8);
@@ -198,7 +170,6 @@ body {
   font-size: 18px;
 }
 
-/* 横並びボタン（給与条件） */
 .salary-buttons-wrapper {
   display: flex;
   gap: 12px;
@@ -207,12 +178,11 @@ body {
   flex: 1;
   flex-direction: column;
   padding: 16px 12px;
-  background: #ffffff; /* 今月分は白で目立たせる */
+  background: #ffffff; 
   color: #3b4d45;
   border: 1px solid rgba(255, 255, 255, 0.9);
 }
 .btn-half.outline {
-  /* 先月分は少し透かして控えめに */
   background: rgba(255, 255, 255, 0.4); 
 }
 .btn-half .btn-icon {
@@ -226,12 +196,12 @@ body {
 }
 
 /* =========================================================
-   6. ローディング画面（可愛いドット）
+   6. ローディング画面
 ========================================================= */
 .loading-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background-color: rgba(240, 250, 245, 0.85); /* 全体テーマに合わせた淡い色 */
+  background-color: rgba(240, 250, 245, 0.85); 
   backdrop-filter: blur(5px);
   display: flex;
   flex-direction: column;

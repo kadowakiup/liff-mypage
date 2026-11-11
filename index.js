@@ -12,9 +12,9 @@ window.onload = async function () {
       return;
     }
 
-    // ▼ ヘッダーにLINEのユーザー名とアイコンを反映
     const profile = await liff.getProfile();
     const userId = profile.userId;
+    
     document.getElementById("display-name").textContent = profile.displayName;
     if (profile.pictureUrl) {
       document.getElementById("profile-img").src = profile.pictureUrl;
@@ -47,23 +47,19 @@ async function fetchLarkData(userId, apiUrl) {
 
     cachedLarkData = await response.json();
 
-    renderApoEfficiency("apo-data-content", "月間アポ効率");
-    renderAccountInfo("nqc-data-content", "Neo Quick Call", "Neo Quick Call PW");
+    // ★ 第3引数に「隠すカード自体のID」を渡して確実に非表示にする
+    renderApoEfficiency("apo-data-content", "月間アポ効率", "apo-card");
+    renderAccountInfo("nqc-data-content", "Neo Quick Call", "Neo Quick Call PW", "nqc-card");
 
   } catch (error) {
     console.error("Fetch Data Error:", error);
     
-    const apoContent = document.getElementById("apo-data-content");
-    if (apoContent) {
-      const apoCard = apoContent.closest('.card');
-      if (apoCard) apoCard.style.display = 'none';
-    }
+    // エラー時もカードごと確実に隠す
+    const apoCard = document.getElementById("apo-card");
+    if (apoCard) apoCard.style.display = 'none';
     
-    const nqcContent = document.getElementById("nqc-data-content");
-    if (nqcContent) {
-      const nqcCard = nqcContent.closest('.card');
-      if (nqcCard) nqcCard.style.display = 'none';
-    }
+    const nqcCard = document.getElementById("nqc-card");
+    if (nqcCard) nqcCard.style.display = 'none';
     
     alert("データの取得に失敗しました。");
   } finally {
@@ -76,13 +72,12 @@ function getBodyData() {
   return cachedLarkData.body ? cachedLarkData.body : cachedLarkData;
 }
 
-function renderApoEfficiency(elementId, dataKey) {
+function renderApoEfficiency(elementId, dataKey, cardId) {
   const contentElement = document.getElementById(elementId);
-  if (!contentElement) return;
+  const cardElement = document.getElementById(cardId);
+  if (!contentElement || !cardElement) return;
 
-  const cardElement = contentElement.closest('.glass-card');
   const bodyData = getBodyData();
-  
   let val = bodyData ? bodyData[dataKey] : null;
 
   if (val && typeof val === 'object') {
@@ -97,31 +92,28 @@ function renderApoEfficiency(elementId, dataKey) {
     val = parseFloat(val);
   }
 
-  let message = ""; // 数字の下に出すコメント
+  let message = ""; 
 
   if (typeof val === 'number') {
-    // 新デザインに合わせた、半透明の背景色変更
-    if (cardElement) {
-      if (val < 1) {
-        cardElement.style.background = "rgba(224, 247, 250, 0.7)"; // 淡い水色
-        message = "次も頑張りましょう！🌱";
-      } else if (val >= 1 && val < 1.5) {
-        cardElement.style.background = "rgba(232, 245, 233, 0.7)"; // 淡い緑色
-        message = "安定したペースです✨";
-      } else if (val >= 1.5 && val < 2) {
-        cardElement.style.background = "rgba(252, 228, 236, 0.7)"; // 淡いピンク
-        message = "素晴らしい効率です！🔥";
-      } else if (val >= 2) {
-        cardElement.style.background = "rgba(243, 229, 245, 0.7)"; // 淡い紫色
-        message = "圧倒的な成果ですね！👑";
-      }
+    if (val < 1) {
+      cardElement.style.background = "rgba(224, 247, 250, 0.7)"; 
+      message = "次も頑張りましょう！🌱";
+    } else if (val >= 1 && val < 1.5) {
+      cardElement.style.background = "rgba(232, 245, 233, 0.7)"; 
+      message = "安定したペースです✨";
+    } else if (val >= 1.5 && val < 2) {
+      cardElement.style.background = "rgba(252, 228, 236, 0.7)"; 
+      message = "素晴らしい効率です！🔥";
+    } else if (val >= 2) {
+      cardElement.style.background = "rgba(243, 229, 245, 0.7)"; 
+      message = "圧倒的な成果ですね！👑";
     }
     val = Math.round(val * 100) / 100; 
   }
 
+  // ★ データが存在しない場合はここで確実にカード全体を非表示
   if (val !== undefined && val !== null && val !== "" && !isNaN(val)) {
     contentElement.classList.add("loaded");
-    // 参考画像のように、数字を特大にして単位をつける
     contentElement.innerHTML = `
       <div class="score-display">
         <span class="score-value">${val}</span>
@@ -129,19 +121,18 @@ function renderApoEfficiency(elementId, dataKey) {
       </div>
       <p class="score-message">${message}</p>
     `;
-    if (cardElement) cardElement.style.display = 'block'; 
+    cardElement.style.display = 'block'; 
   } else {
-    if (cardElement) cardElement.style.display = 'none';
+    cardElement.style.display = 'none';
   }
 }
 
-function renderAccountInfo(elementId, idKey, pwKey) {
+function renderAccountInfo(elementId, idKey, pwKey, cardId) {
   const contentElement = document.getElementById(elementId);
-  if (!contentElement) return; 
+  const cardElement = document.getElementById(cardId);
+  if (!contentElement || !cardElement) return; 
 
-  const cardElement = contentElement.closest('.glass-card');
   const bodyData = getBodyData();
-  
   const idPwData = bodyData ? bodyData["ID/PW"] : null;
   
   let accountId = null;
@@ -156,6 +147,7 @@ function renderAccountInfo(elementId, idKey, pwKey) {
     }
   }
 
+  // ★ データが存在しない場合はここで確実にカード全体を非表示
   if (accountId || accountPw) {
     contentElement.classList.add("loaded");
     contentElement.innerHTML = `
@@ -168,9 +160,9 @@ function renderAccountInfo(elementId, idKey, pwKey) {
         <strong class="account-value">${accountPw || "未登録"}</strong>
       </div>
     `;
-    if (cardElement) cardElement.style.display = 'block';
+    cardElement.style.display = 'block';
   } else {
-    if (cardElement) cardElement.style.display = 'none';
+    cardElement.style.display = 'none';
   }
 }
 
