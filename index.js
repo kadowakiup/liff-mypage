@@ -47,7 +47,7 @@ function setupSnowmanSpeech() {
     // 1. 吹き出しを透明にする（1.2秒かけてゆっくり消える）
     speechBubble.style.opacity = '0';
 
-    // 2. ★変更：CSSに合わせて1.2秒（1200ミリ秒）待ってから文字を入れ替える
+    // 2. CSSに合わせて1.2秒（1200ミリ秒）待ってから文字を入れ替える
     setTimeout(() => {
       const randomIndex = Math.floor(Math.random() * messages.length);
       speechBubble.innerHTML = messages[randomIndex];
@@ -140,10 +140,10 @@ function renderApoEfficiency(elementId, dataKey, cardId) {
 
   if (val !== undefined && val !== null && val !== "" && !isNaN(val)) {
     contentElement.classList.add("loaded");
+    // ★「件」の単位を外し、数字のみ表示させる
     contentElement.innerHTML = `
       <div class="score-display">
         <span class="score-value">${val}</span>
-        <span class="score-unit">件</span>
       </div>
       <p class="score-message">${message}</p>
     `;
